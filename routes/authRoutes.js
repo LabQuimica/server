@@ -35,13 +35,36 @@ authRouter.post('/login', async (req, res) => {
     }
 });
 
+import jwt from 'jsonwebtoken';
+
 authRouter.get('/:id', async (req, res) => {
+  const token = req.headers.authorization?.split(' ')[1]; // Extrae el token del encabezado Authorization
+
+  if (!token) {
+    return res.status(401).json({ message: 'No token provided' });
+  }
+
+  try {
+    // Verifica el token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Verifica que el ID en el token coincida con el ID solicitado
+    if (decoded.id !== parseInt(req.params.id, 10)) {
+      return res.status(403).json({ message: 'Unauthorized access' });
+    }
+
+    // Busca al usuario por su ID
     const user = await getUserById(req.params.id);
     if (!user) {
-        return res.status(404).json({ message: 'Usuario no encontrado :(' });
+      return res.status(404).json({ message: 'Usuario no encontrado.' });
     }
+
     res.status(200).json(user);
-})
+  } catch (error) {
+    console.error(error);
+    res.status(401).json({ message: 'Invalid or expired token.' });
+  }
+});
 
 
 export default authRouter;

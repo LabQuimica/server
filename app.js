@@ -14,4 +14,4 @@ app.use(cors(corsOptions));
 // Rutas 
 app.use('/auth', authRouter);
 
-app.listen(3000, '0.0.0.0', () => console.log('Server running on port 3000'));
+app.listen(5000, '0.0.0.0', () => console.log('Server running on port 5000'));
