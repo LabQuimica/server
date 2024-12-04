@@ -3,7 +3,7 @@ import cors from 'cors';
 import authRouter from './routes/authRoutes.js';
 
 const corsOptions = {
-    methods: ['GET'], 
+    methods: ['GET','POST', 'PUT', 'DELETE'], 
     credentials: true,   
 }
 
