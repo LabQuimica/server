@@ -1,0 +1,17 @@
+Invoke-WebRequest -Uri "http://localhost:3000/auth/register" `
+-Method POST `
+-Headers @{ "Content-Type" = "application/json" } `
+-Body '{"email":"admin@example.com","password":"admin123","name":"Admin"}'
+
+
+
+Invoke-WebRequest -Uri "http://localhost:3000/auth/login" `
+-Method POST `
+-Headers @{ "Content-Type" = "application/json" } `
+-Body '{"email":"admin@example.com","password":"admin123"}'
+
+
+
+Invoke-WebRequest -Uri "http://localhost:3000/auth/1" `
+-Method GET `
+-Headers @{ "Authorization" = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." }

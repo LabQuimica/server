@@ -23,7 +23,7 @@ export async function postLogin(email, password){
     // Verificar si el usuario ya existe
     const [existingUser] = await pool.query("SELECT * FROM users WHERE email = ?", [email]);
     if (existingUser.length === 0) {
-        throw new Error('User does not exist');
+        throw new Error('User does not exist :(');
     }
 
     const isMatch = await bycrypt.compare(password, existingUser[0].password);
@@ -43,4 +43,3 @@ export async function getUserById(id){
     const [rows] = await pool.query("SELECT id_user,email, name,date, rol FROM users WHERE id_user =  ?", [id])
     return rows[0]
 }
-
