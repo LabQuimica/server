@@ -19,7 +19,7 @@ export async function postRegister(email, password, name){
   return { user };
 }
 
-export async function postLogin(email, password){
+export async function postLogin(email, password) {
     // Verificar si el usuario ya existe
     const [existingUser] = await pool.query("SELECT * FROM users WHERE email = ?", [email]);
     if (existingUser.length === 0) {
@@ -35,10 +35,17 @@ export async function postLogin(email, password){
         expiresIn: '3h'
     });
 
-    return { token };
-  }
-  
+    const user = {
+        id_user: existingUser[0].id_user,
+        name: existingUser[0].name,
+        email: existingUser[0].email,
+        date: existingUser[0].date,
+        rol: existingUser[0].rol,
+        active: existingUser[0].active
+    };
 
+    return { token, user };
+}
 export async function getUserById(id){
     const [rows] = await pool.query("SELECT id_user,email, name,date, rol FROM users WHERE id_user =  ?", [id])
     return rows[0]
