@@ -36,9 +36,9 @@ CREATE TABLE `grupo`(
 CREATE TABLE `grupo_alumnos`(
     `id_ga` INT AUTO_INCREMENT PRIMARY KEY,
     `fk_grupo_ga` TINYINT NOT NULL,
-    `fk_users_ga` INT NOT NULL,
+    `fk_alumno_users_ga` INT NOT NULL,
     FOREIGN KEY (`fk_grupo_ga`) REFERENCES `grupo`(`id_grupo`),
-    FOREIGN KEY (`fk_users_ga`) REFERENCES `users`(`id_user`)
+    FOREIGN KEY (`fk_alumno_users_ga`) REFERENCES `users`(`id_user`)
 ) ENGINE=InnoDB;
 
 CREATE TABLE `items`(
@@ -104,12 +104,12 @@ CREATE TABLE `solidos`(
 
 CREATE TABLE `practicas`(
     `id_practica` INT AUTO_INCREMENT PRIMARY KEY,
-    `fk_users_practica` INT NOT NULL,
+    `fk_profesor_users_practica` INT NOT NULL,
     `nombre` VARCHAR(255) NOT NULL,
     `descripcion` TEXT,
     `fecha_creacion` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `fecha_modificacion` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (`fk_users_practica`) REFERENCES `users`(`id_user`)
+    FOREIGN KEY (`fk_profesor_users_practica`) REFERENCES `users`(`id_user`)
 ) ENGINE=InnoDB;
 
 CREATE TABLE `practicas_materiales`(
@@ -125,25 +125,25 @@ CREATE TABLE `practicas_asignadas`(
     `id_pa` INT AUTO_INCREMENT PRIMARY KEY,
     `fk_practicas_pa` INT NOT NULL,
     `fk_grupo_pa` TINYINT NOT NULL COMMENT 'grupo a quien le asigno la practica',
-    `fk_users_pa` INT NOT NULL COMMENT 'profesor que la asigno',
+    `fk_profesor_users_pa` INT NOT NULL COMMENT 'profesor que la asigno',
     `fecha_asignada` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `fecha_entrega` TIMESTAMP NOT NULL,
     `status` ENUM('pendiente', 'progreso', 'completada', 'cancelada') NOT NULL DEFAULT 'pendiente',
     `fecha_modificacion` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (`fk_practicas_pa`) REFERENCES `practicas`(`id_practica`),
     FOREIGN KEY (`fk_grupo_pa`) REFERENCES `grupo`(`id_grupo`),
-    FOREIGN KEY (`fk_users_pa`) REFERENCES `users`(`id_user`)
+    FOREIGN KEY (`fk_profesor_users_pa`) REFERENCES `users`(`id_user`)
 ) ENGINE=InnoDB;
 
 CREATE TABLE `vale_alumno`(
     `id_vale` INT AUTO_INCREMENT PRIMARY KEY,
     `fk_pa_vale` INT NOT NULL,
-    `fk_users_vale` INT NOT NULL COMMENT 'Usuario a quien es responsable',
+    `fk_alumno_users_vale` INT NOT NULL COMMENT 'Usuario a quien es responsable',
     `status` ENUM('pendiente', 'progreso', 'completada', 'cancelada') NOT NULL,
     `observaciones` VARCHAR(255),
     `fecha_solicitada` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (`fk_pa_vale`) REFERENCES `practicas_asignadas`(`id_pa`),
-    FOREIGN KEY (`fk_users_vale`) REFERENCES `users`(`id_user`)
+    FOREIGN KEY (`fk_alumno_users_vale`) REFERENCES `users`(`id_user`)
 ) ENGINE=InnoDB;
 
 INSERT INTO users (name, email, password) VALUES
@@ -316,7 +316,7 @@ VALUES (3, 'SOL003', 'Aluminio', 'solidos', 'Almacén I', 40.00, 'Para estructur
 INSERT INTO solidos (fk_items_solidos, fk_contenedores_solidos)
 VALUES (LAST_INSERT_ID(), 3);
 
-INSERT INTO grupo_alumnos (fk_grupo_ga, fk_users_ga) VALUES
+INSERT INTO grupo_alumnos (fk_grupo_ga, fk_alumno_users_ga) VALUES
 (1, 1),
 (1, 2),
 (2, 3),
@@ -324,7 +324,7 @@ INSERT INTO grupo_alumnos (fk_grupo_ga, fk_users_ga) VALUES
 (1, 5),
 (2, 5);
 
-INSERT INTO `practicas` (`fk_users_practica`, `nombre`, `descripcion`) VALUES
+INSERT INTO `practicas` (`fk_profesor_users_practica`, `nombre`, `descripcion`) VALUES
 (5, 'Práctica de Matemáticas', 'Resolver problemas de álgebra y geometría.'),
 (5, 'Práctica de Física', 'Experimentos relacionados con las leyes de Newton.'),
 (5, 'Práctica de Química', 'Realizar reacciones químicas básicas.');
@@ -344,13 +344,13 @@ INSERT INTO `practicas_materiales` (`fk_practicas_pm`, `fk_items_pm`, `cantidad`
 (3, 12, 6.00),
 (3, 13, 6.00);
 
-INSERT INTO `practicas_asignadas` (`fk_practicas_pa`, `fk_grupo_pa`, `fk_users_pa`, `fecha_entrega`) VALUES
+INSERT INTO `practicas_asignadas` (`fk_practicas_pa`, `fk_grupo_pa`, `fk_profesor_users_pa`, `fecha_entrega`) VALUES
 (1, 1, 5, '2025-01-27'),
 (2, 2, 5, '2025-01-28'),
 (3, 1, 5, '2025-01-29'),
 (3, 2, 5, '2025-01-30');
 
-INSERT INTO `vale_alumno` (`fk_pa_vale`, `fk_users_vale`, `status`, `observaciones`) VALUES
+INSERT INTO `vale_alumno` (`fk_pa_vale`, `fk_alumno_users_vale`, `status`, `observaciones`) VALUES
 (1, 1, 'pendiente', 'Falta material'),
 (2, 3, 'progreso', 'En revisión'),
 (3, 2, 'completada', 'Entregada'),
