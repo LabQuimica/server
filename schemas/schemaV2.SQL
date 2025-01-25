@@ -142,6 +142,7 @@ CREATE TABLE `vale_alumno`(
     `status` ENUM('pendiente', 'progreso', 'completada', 'cancelada') NOT NULL,
     `observaciones` VARCHAR(255),
     `fecha_solicitada` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `fecha_modificacion` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (`fk_pa_vale`) REFERENCES `practicas_asignadas`(`id_pa`),
     FOREIGN KEY (`fk_alumno_users_vale`) REFERENCES `users`(`id_user`)
 ) ENGINE=InnoDB;
