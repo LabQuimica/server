@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import authRouter from './routes/authRoutes.js';
+import inventoryRouter from "./routes/inventoryRoutes.js";
 
 const corsOptions = {
     methods: ['GET','POST', 'PUT', 'DELETE'], 
@@ -10,6 +11,10 @@ const corsOptions = {
 const app = express();
 app.use(express.json());
 app.use(cors(corsOptions));
+
+// Rutas de inventario (Enero Mike)
+app.use("/inventory", inventoryRouter);
+
 
 // Rutas 
 app.use('/auth', authRouter);
