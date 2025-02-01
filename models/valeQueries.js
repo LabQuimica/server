@@ -2,24 +2,26 @@ export const allVales = `
 SELECT
     va.id_vale,
     u.name AS alumno,
-    g.grupo,
+    g.nombre,
     g.semestre,
     va.status AS estado_vale,
     va.observaciones AS observaciones_vale,
     va.fecha_solicitada,
     va.fecha_modificacion,
-    up.name AS profesor,
+    u2.name AS profesor,
     pa.status AS estado_practica
 FROM
-    grupo g
+    vale_alumno va
 JOIN
-    practicas_asignadas pa ON g.id_grupo = pa.fk_grupo_pa
+    practicas_asignadas pa on va.fk_pa_vale = pa.id_pa
 JOIN
-    vale_alumno va ON pa.id_pa = va.fk_pa_vale
+    grupo g on pa.fk_grupo_pa = g.id_grupo
 JOIN
-    users u ON va.fk_alumno_users_vale = u.id_user
+    users u on va.fk_alumno_users_vale = u.id_user
 JOIN
-    users up ON pa.fk_profesor_users_pa = up.id_user
+    practicas p on pa.fk_practicas_pa = p.id_practica
+JOIN
+    users u2 on p.fk_profesor_users_practica = u2.id_user;
 `;
 
 export const vales = `

@@ -18,7 +18,6 @@ export async function updateVales(vales) {
                 'UPDATE vale_alumno SET status = ? WHERE id_vale = ?',
                 [newStatus, id_vale]
             );
-            console.log(`Vale ${id_vale} actualizado a status: ${newStatus}`);
         }
         return { status: 200, data: { message: 'Vales actualizados correctamente' } };
     } catch (error) {
