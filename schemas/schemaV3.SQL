@@ -116,6 +116,28 @@ INSERT INTO users (name, email, password) VALUES
  ('Lecter', 'dev3@dev.com', '$2b$10$ryAHsRcpWxv34G3utMtRLev4UaVjUDuEeYbybkwt8MXB8tr0vWeMi'),
  ('Eric', 'dev4@dev.com', '$2b$10$ryAHsRcpWxv34G3utMtRLev4UaVjUDuEeYbybkwt8MXB8tr0vWeMi');
 
+INSERT INTO users (name, email, password) VALUES
+ ('Alice', 'user1@example.com', '$2b$10$ryAHsRcpWxv34G3utMtRLev4UaVjUDuEeYbybkwt8MXB8tr0vWeMi'),
+ ('Bob', 'user2@example.com', '$2b$10$ryAHsRcpWxv34G3utMtRLev4UaVjUDuEeYbybkwt8MXB8tr0vWeMi'),
+ ('Charlie', 'user3@example.com', '$2b$10$ryAHsRcpWxv34G3utMtRLev4UaVjUDuEeYbybkwt8MXB8tr0vWeMi'),
+ ('Diana', 'user4@example.com', '$2b$10$ryAHsRcpWxv34G3utMtRLev4UaVjUDuEeYbybkwt8MXB8tr0vWeMi'),
+ ('Eve', 'user5@example.com', '$2b$10$ryAHsRcpWxv34G3utMtRLev4UaVjUDuEeYbybkwt8MXB8tr0vWeMi'),
+ ('Frank', 'user6@example.com', '$2b$10$ryAHsRcpWxv34G3utMtRLev4UaVjUDuEeYbybkwt8MXB8tr0vWeMi'),
+ ('Grace', 'user7@example.com', '$2b$10$ryAHsRcpWxv34G3utMtRLev4UaVjUDuEeYbybkwt8MXB8tr0vWeMi'),
+ ('Henry', 'user8@example.com', '$2b$10$ryAHsRcpWxv34G3utMtRLev4UaVjUDuEeYbybkwt8MXB8tr0vWeMi'),
+ ('Ivy', 'user9@example.com', '$2b$10$ryAHsRcpWxv34G3utMtRLev4UaVjUDuEeYbybkwt8MXB8tr0vWeMi'),
+ ('Jack', 'user10@example.com', '$2b$10$ryAHsRcpWxv34G3utMtRLev4UaVjUDuEeYbybkwt8MXB8tr0vWeMi'),
+ ('Karen', 'user11@example.com', '$2b$10$ryAHsRcpWxv34G3utMtRLev4UaVjUDuEeYbybkwt8MXB8tr0vWeMi'),
+ ('Louis', 'user12@example.com', '$2b$10$ryAHsRcpWxv34G3utMtRLev4UaVjUDuEeYbybkwt8MXB8tr0vWeMi'),
+ ('Martha', 'user13@example.com', '$2b$10$ryAHsRcpWxv34G3utMtRLev4UaVjUDuEeYbybkwt8MXB8tr0vWeMi'),
+ ('Nathan', 'user14@example.com', '$2b$10$ryAHsRcpWxv34G3utMtRLev4UaVjUDuEeYbybkwt8MXB8tr0vWeMi'),
+ ('Olivia', 'user15@example.com', '$2b$10$ryAHsRcpWxv34G3utMtRLev4UaVjUDuEeYbybkwt8MXB8tr0vWeMi'),
+ ('Peter', 'user16@example.com', '$2b$10$ryAHsRcpWxv34G3utMtRLev4UaVjUDuEeYbybkwt8MXB8tr0vWeMi'),
+ ('Quincy', 'user17@example.com', '$2b$10$ryAHsRcpWxv34G3utMtRLev4UaVjUDuEeYbybkwt8MXB8tr0vWeMi'),
+ ('Rachel', 'user18@example.com', '$2b$10$ryAHsRcpWxv34G3utMtRLev4UaVjUDuEeYbybkwt8MXB8tr0vWeMi'),
+ ('Sam', 'user19@example.com', '$2b$10$ryAHsRcpWxv34G3utMtRLev4UaVjUDuEeYbybkwt8MXB8tr0vWeMi'),
+ ('Tina', 'user20@example.com', '$2b$10$ryAHsRcpWxv34G3utMtRLev4UaVjUDuEeYbybkwt8MXB8tr0vWeMi');
+
 INSERT INTO marcas (nombre) VALUES
 ('Generica'),
 ('Dedutel'),
@@ -242,11 +264,58 @@ INSERT INTO `practicas_asignadas` (`fk_practicas_pa`, `fk_grupo_pa`, `fecha_entr
 (3, 1, '2025-01-29'),
 (3, 2, '2025-01-30');
 
+
 INSERT INTO `vale_alumno` (`fk_pa_vale`, `fk_alumno_users_vale`, `status`, `observaciones`) VALUES
-(1, 1, 'pendiente', 'Falta material'),
-(2, 3, 'progreso', 'En revisión'),
-(3, 2, 'completada', 'Entregada'),
-(4, 4, 'cancelada', 'No se realizó');
+(1, 6, 'pendiente', 'Pendiente de aprobación'),
+(2, 7, 'progreso', 'En proceso de revisión'),
+(3, 8, 'completada', 'Material entregado'),
+(4, 9, 'cancelada', 'Solicitud cancelada por el alumno'),
+(1, 10, 'pendiente', 'Pendiente por asignación'),
+(2, 11, 'progreso', 'Revisión en curso'),
+(3, 12, 'completada', 'Material entregado correctamente'),
+(4, 13, 'cancelada', 'Cancelado por falta de pago'),
+(1, 14, 'pendiente', 'A la espera de confirmación'),
+(2, 15, 'progreso', 'Revisando detalles del material'),
+(3, 16, 'completada', 'Entrega completada con éxito'),
+(4, 17, 'cancelada', 'Cancelada por falta de información'),
+(1, 18, 'pendiente', 'Esperando disponibilidad del material'),
+(2, 19, 'progreso', 'En análisis por el departamento'),
+(3, 20, 'completada', 'Recibido por el alumno'),
+(4, 21, 'cancelada', 'Cancelado por solicitud del alumno'),
+(1, 22, 'pendiente', 'Revisión inicial pendiente'),
+(2, 23, 'progreso', 'En revisión detallada'),
+(3, 24, 'completada', 'Material recibido'),
+(4, 25, 'cancelada', 'Cancelado por falta de material');
+
+INSERT INTO `vale_alumno` (`fk_pa_vale`, `fk_alumno_users_vale`, `status`, `observaciones`) VALUES
+(1, 1, 'pendiente', 'Pendiente de revisión adicional'),
+(2, 3, 'progreso', 'Se requiere validación extra'),
+(3, 2, 'completada', 'Entregado y confirmado'),
+(4, 4, 'cancelada', 'Cancelado por duplicidad'),
+(1, 6, 'pendiente', 'Material no disponible aún'),
+(2, 7, 'progreso', 'Revisión secundaria en curso'),
+(3, 8, 'completada', 'Entrega efectuada correctamente'),
+(4, 9, 'cancelada', 'Cancelación solicitada por el usuario'),
+(1, 10, 'pendiente', 'Faltan documentos para completar'),
+(2, 11, 'progreso', 'Avanzando en la revisión'),
+(3, 12, 'completada', 'Material recibido exitosamente'),
+(4, 13, 'cancelada', 'Anulado por error en solicitud'),
+(1, 14, 'pendiente', 'Esperando confirmación del departamento'),
+(2, 15, 'progreso', 'Revisión avanzada en curso'),
+(3, 16, 'completada', 'Entrega cerrada con éxito'),
+(4, 17, 'cancelada', 'Cancelado por duplicación de solicitud'),
+(1, 18, 'pendiente', 'Validación de material en espera'),
+(2, 19, 'progreso', 'Actualización pendiente por el usuario'),
+(3, 20, 'completada', 'Finalizado y material recibido'),
+(4, 21, 'cancelada', 'Cancelación aprobada por administración'),
+(1, 1, 'pendiente', 'Revisión inicial retrasada'),
+(2, 3, 'progreso', 'En revisión nuevamente'),
+(3, 6, 'completada', 'Entrega adicional completada'),
+(4, 9, 'cancelada', 'Cancelado debido a inactividad'),
+(1, 12, 'pendiente', 'Pendiente de evaluación'),
+(2, 15, 'progreso', 'Avanzando en el proceso'),
+(3, 20, 'completada', 'Cerrado con éxito'),
+(4, 24, 'cancelada', 'Anulación realizada por error administrativo');
 
 -- #####################################
 --          FUNCIONES DE PRUEBA
