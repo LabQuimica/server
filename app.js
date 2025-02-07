@@ -4,6 +4,7 @@ import authRouter from './routes/authRoutes.js';
 import valeRouter from "./routes/valeRoutes.js"
 import errorHandler from './middleware/errorHandler.js';
 import userRouter from './routes/userRoutes.js';
+import alertRouter from './routes/itemsAlertRoutes.js';
 
 const corsOptions = {
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
@@ -19,6 +20,8 @@ app.use(cors(corsOptions));
 app.use('/auth', authRouter);
 app.use('/vales', valeRouter);
 app.use('/users', userRouter);
+app.use('/alerts', alertRouter);
+
 
 
 // Manejo de errores global
