@@ -3,6 +3,10 @@ import cors from 'cors';
 import authRouter from './routes/authRoutes.js';
 import valeRouter from "./routes/valeRoutes.js"
 import errorHandler from './middleware/errorHandler.js';
+import dotenv from "dotenv";
+
+dotenv.config();
+const port = process.env.PORT || 1234;
 
 const corsOptions = {
     methods: ['GET','POST', 'PUT', 'DELETE'], 
@@ -20,4 +24,4 @@ app.use('/vales', valeRouter);
 // Manejo de errores global
 app.use(errorHandler);
 
-app.listen(1234, '0.0.0.0', () => console.log('Server running on port 5000'));
+app.listen(port, '0.0.0.0', () => console.log(`Server running on port ${port}`));
