@@ -8,10 +8,18 @@ import dotenv from "dotenv";
 dotenv.config();
 const port = process.env.PORT || 1234;
 
+import userRouter from './routes/userRoutes.js';
+import alertRouter from './routes/itemsAlertRoutes.js';
+  
+import practicaRouter from './routes/practicaRoutes.js';
+import docenteRouter from './routes/docentesRoutes.js';
+
+
 const corsOptions = {
-    methods: ['GET','POST', 'PUT', 'DELETE'], 
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,   
-}
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  };
 
 const app = express();
 app.use(express.json());
@@ -20,6 +28,12 @@ app.use(cors(corsOptions));
 // Rutas 
 app.use('/auth', authRouter);
 app.use('/vales', valeRouter);
+
+app.use('/users', userRouter);
+app.use('/alerts', alertRouter);
+
+app.use('/practicas', practicaRouter);
+app.use('/docentes', docenteRouter);
 
 // Manejo de errores global
 app.use(errorHandler);
