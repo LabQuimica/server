@@ -3,6 +3,10 @@ import cors from 'cors';
 import authRouter from './routes/authRoutes.js';
 import valeRouter from "./routes/valeRoutes.js"
 import errorHandler from './middleware/errorHandler.js';
+import dotenv from "dotenv";
+
+dotenv.config();
+const port = process.env.PORT || 1234;
 
 import userRouter from './routes/userRoutes.js';
 import alertRouter from './routes/itemsAlertRoutes.js';
@@ -34,6 +38,4 @@ app.use('/docentes', docenteRouter);
 // Manejo de errores global
 app.use(errorHandler);
 
-const PORT = 1234;
-app.listen(PORT, '0.0.0.0', () => console.log('Server running on port', PORT));
-
+app.listen(port, '0.0.0.0', () => console.log(`Server running on port ${port}`));
