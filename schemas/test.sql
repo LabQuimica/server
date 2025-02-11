@@ -292,99 +292,37 @@ INSERT INTO grupo_alumnos (fk_grupo_ga, fk_alumno_users_ga) VALUES
 (1, 5),
 (2, 5);
 INSERT INTO `items` (`fk_marca_item`, `num_serie`, `nombre`, `tipo`, `ubicacion`, `cantidad`, `observacion`, `especial`) VALUES
-(1, '123456', 'Kit de Biología', 'kits', 'Aula 1', 5.00, 'Kit de biología básico', 'https:'),
-(1, '123457', 'Kit de Física', 'kits', 'Aula 2', 10.00, 'Kit de física básico', 'https://'),
-(1, '123458', 'Kit de Química', 'kits', 'Aula 3', 15.00, 'Kit de química básico', 'https://www.google.com'),
-(1, '123459', 'Sensor de Temperatura', 'sensores', 'Laboratorio 1', 3.00, 'Sensor de temperatura para medir en grados Celsius', 'https://www.google.com'),
-(2, '123460', 'Sensor de Luz', 'sensores', 'Laboratorio 2', 6.00, 'Sensor de luz para medir en lux', 'https://www.google.com'),
-(2, '123461', 'Sensor de Sonido', 'sensores', 'Laboratorio 3', 9.00, 'Sensor de sonido para medir en decibeles', 'Frasco ámbar'),
-(2, '123462', 'Ácido Clorhídrico', 'liquidos', 'Almacén 1', 2.00, 'Acido clorhídrico', 'https://www.google.com'),
-(3, '123463', 'Sulfato de Cobre', 'solidos', 'Almacén 2', 4.00, 'Sulfato de cobre', 'Bote de plástico'),
-(3, '123464', 'Sulfato de Magnesio', 'solidos', 'Almacén 3', 6.00, 'Sulfato de magnesio', 'Bote de plástico'),
-(3, '123465', 'Sulfato de Zinc', 'solidos', 'Almacén 4', 6.00, 'Sulfato de zinc', 'Bote de plástico'),
-(4, '123466', 'Sulfato de Hierro', 'solidos', 'Almacén 5', 6.00, 'Sulfato de hierro', 'Bote de plástico'),
-(4, '123467', 'Sulfato de Plata', 'solidos', 'Almacén 6', 6.00, 'Sulfato de plata', 'Bote de plástico'),
-(4, '123468', 'Sulfato de Aluminio', 'solidos', 'Almacén 7', 6.00, 'Sulfato de aluminio', 'Bote de plástico');
+(1, '123456', 'Kit de Biología', 'kits', 'Aula 1', 100.00, 'Kit de biología básico', 'https:');
 
 
 INSERT INTO `practicas` (`fk_profesor_users_practica`, `nombre`, `descripcion`) VALUES
-(5, 'Práctica de Matemáticas', 'Resolver problemas de álgebra y geometría.'),
-(5, 'Práctica de Física', 'Experimentos relacionados con las leyes de Newton.'),
-(5, 'Práctica de Química', 'Realizar reacciones químicas básicas.');
+(5, 'Práctica de Matemáticas', 'Resolver problemas de álgebra y geometría.');
+-- (5, 'Práctica de Física', 'Experimentos relacionados con las leyes de Newton.'),
+-- (5, 'Práctica de Química', 'Realizar reacciones químicas básicas.');
 
-INSERT INTO `practicas_materiales` (`fk_practicas_pm`, `fk_items_pm`, `cantidad`) VALUES
-(1, 1, 5.00),
-(1, 2, 10.00),
-(1, 3, 15.00),
-(2, 4, 3.00),
-(2, 5, 6.00),
-(2, 6, 9.00),
-(3, 7, 2.00),
-(3, 8, 4.00),
-(3, 9, 6.00),
-(3, 10, 6.00),
-(3, 11, 6.00),
-(3, 12, 6.00),
-(3, 13, 6.00);
+-- INSERT INTO `practicas_materiales` (`fk_practicas_pm`, `fk_items_pm`, `cantidad`) VALUES
+-- (1, 1, 5.00),
+-- (1, 2, 10.00),
+-- (1, 3, 15.00),
+-- (2, 4, 3.00),
+-- (2, 5, 6.00),
+-- (2, 6, 9.00),
+-- (3, 7, 2.00),
+-- (3, 8, 4.00),
+-- (3, 9, 6.00),
+-- (3, 10, 6.00),
+-- (3, 11, 6.00),
+-- (3, 12, 6.00),
+-- (3, 13, 6.00);
 
-INSERT INTO `practicas_asignadas` (`fk_practicas_pa`, `fk_grupo_pa`, `fecha_entrega`, `status`) VALUES
-(1, 1, '2025-01-27', 'pendiente'),
-(2, 2, '2025-01-28', 'progreso'),
-(3, 1, '2025-01-29', 'completada'),
-(3, 2, '2025-01-30', 'cancelada');
+-- INSERT INTO `practicas_asignadas` (`fk_practicas_pa`, `fk_grupo_pa`, `fecha_entrega`) VALUES
+-- (1, 1, '2025-01-27');
 
+-- INSERT INTO `vale_alumno` (`fk_pa_vale`, `fk_alumno_users_vale`, `status`, `observaciones`) VALUES
+-- (1, 6, 'pendiente', 'Pendiente de aprobación');
 
-INSERT INTO `vale_alumno` (`fk_pa_vale`, `fk_alumno_users_vale`, `status`, `observaciones`) VALUES
-(1, 6, 'pendiente', 'Pendiente de aprobación'),
-(2, 7, 'progreso', 'En proceso de revisión'),
-(3, 8, 'completada', 'Material entregado'),
-(4, 9, 'cancelada', 'Solicitud cancelada por el alumno'),
-(1, 10, 'pendiente', 'Pendiente por asignación'),
-(2, 11, 'progreso', 'Revisión en curso'),
-(3, 12, 'completada', 'Material entregado correctamente'),
-(4, 13, 'cancelada', 'Cancelado por falta de pago'),
-(1, 14, 'pendiente', 'A la espera de confirmación'),
-(2, 15, 'progreso', 'Revisando detalles del material'),
-(3, 16, 'completada', 'Entrega completada con éxito'),
-(4, 17, 'cancelada', 'Cancelada por falta de información'),
-(1, 18, 'pendiente', 'Esperando disponibilidad del material'),
-(2, 19, 'progreso', 'En análisis por el departamento'),
-(3, 20, 'completada', 'Recibido por el alumno'),
-(4, 21, 'cancelada', 'Cancelado por solicitud del alumno'),
-(1, 22, 'pendiente', 'Revisión inicial pendiente'),
-(2, 23, 'progreso', 'En revisión detallada'),
-(3, 24, 'completada', 'Material recibido'),
-(4, 25, 'cancelada', 'Cancelado por falta de material');
-
-INSERT INTO `vale_alumno` (`fk_pa_vale`, `fk_alumno_users_vale`, `status`, `observaciones`) VALUES
-(1, 1, 'pendiente', 'Pendiente de revisión adicional'),
-(2, 3, 'progreso', 'Se requiere validación extra'),
-(3, 2, 'completada', 'Entregado y confirmado'),
-(4, 4, 'cancelada', 'Cancelado por duplicidad'),
-(1, 6, 'pendiente', 'Material no disponible aún'),
-(2, 7, 'progreso', 'Revisión secundaria en curso'),
-(3, 8, 'completada', 'Entrega efectuada correctamente'),
-(4, 9, 'cancelada', 'Cancelación solicitada por el usuario'),
-(1, 10, 'pendiente', 'Faltan documentos para completar'),
-(2, 11, 'progreso', 'Avanzando en la revisión'),
-(3, 12, 'completada', 'Material recibido exitosamente'),
-(4, 13, 'cancelada', 'Anulado por error en solicitud'),
-(1, 14, 'pendiente', 'Esperando confirmación del departamento'),
-(2, 15, 'progreso', 'Revisión avanzada en curso'),
-(3, 16, 'completada', 'Entrega cerrada con éxito'),
-(4, 17, 'cancelada', 'Cancelado por duplicación de solicitud'),
-(1, 18, 'pendiente', 'Validación de material en espera'),
-(2, 19, 'progreso', 'Actualización pendiente por el usuario'),
-(3, 20, 'completada', 'Finalizado y material recibido'),
-(4, 21, 'cancelada', 'Cancelación aprobada por administración'),
-(1, 1, 'pendiente', 'Revisión inicial retrasada'),
-(2, 3, 'progreso', 'En revisión nuevamente'),
-(3, 6, 'completada', 'Entrega adicional completada'),
-(4, 9, 'cancelada', 'Cancelado debido a inactividad'),
-(1, 12, 'pendiente', 'Pendiente de evaluación'),
-(2, 15, 'progreso', 'Avanzando en el proceso'),
-(3, 20, 'completada', 'Cerrado con éxito'),
-(4, 24, 'cancelada', 'Anulación realizada por error administrativo');
+-- INSERT INTO `vale_alumno` (`fk_pa_vale`, `fk_alumno_users_vale`, `status`, `observaciones`) VALUES
+-- (1, 1, 'pendiente', 'Pendiente de revisión adicional');
 
 -- #####################################
 --          FUNCIONES DE PRUEBA
