@@ -72,6 +72,10 @@ CREATE TABLE `practicas`(
     `descripcion` TEXT,
     `fecha_creacion` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `fecha_modificacion` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+<<<<<<< Updated upstream
+=======
+    `num_equipos` TINYINT NOT NULL,
+>>>>>>> Stashed changes
     FOREIGN KEY (`fk_profesor_users_practica`) REFERENCES `users`(`id_user`)
 ) ENGINE=InnoDB;
 
@@ -307,10 +311,17 @@ INSERT INTO `items` (`fk_marca_item`, `num_serie`, `nombre`, `tipo`, `ubicacion`
 (4, '123468', 'Sulfato de Aluminio', 'solidos', 'Almacén 7', 6.00, 'Sulfato de aluminio', 'Bote de plástico');
 
 
+<<<<<<< Updated upstream
 INSERT INTO `practicas` (`fk_profesor_users_practica`, `nombre`, `descripcion`) VALUES
 (5, 'Práctica de Matemáticas', 'Resolver problemas de álgebra y geometría.'),
 (5, 'Práctica de Física', 'Experimentos relacionados con las leyes de Newton.'),
 (5, 'Práctica de Química', 'Realizar reacciones químicas básicas.');
+=======
+INSERT INTO `practicas` (`fk_profesor_users_practica`, `nombre`, `descripcion` , `num_equipos`) VALUES
+(5, 'Práctica de Matemáticas', 'Resolver problemas de álgebra y geometría.', 5),
+(5, 'Práctica de Física', 'Experimentos relacionados con las leyes de Newton.', 4),
+(5, 'Práctica de Química', 'Realizar reacciones químicas básicas.', 5);
+>>>>>>> Stashed changes
 
 INSERT INTO `practicas_materiales` (`fk_practicas_pm`, `fk_items_pm`, `cantidad`) VALUES
 (1, 1, 5.00),
