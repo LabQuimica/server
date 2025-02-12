@@ -14,6 +14,7 @@ CREATE TABLE `users`(
     `date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `rol` ENUM('administrador', 'profesor', 'alumno') NOT NULL DEFAULT 'alumno',
     `active` BOOLEAN NOT NULL DEFAULT '1',
+    `codigo` VARCHAR(30),
     UNIQUE (`email`)
 ) ENGINE=InnoDB;
 
@@ -123,65 +124,6 @@ CREATE TABLE `vale_profesor` (
     FOREIGN KEY (`fk_items_vale_profesor`) REFERENCES `items`(`id_item`)
 ) ENGINE=InnoDB;
 
-DELIMITER $$
-
-CREATE TRIGGER `after_vale_alumno_insert`
-AFTER INSERT ON `vale_alumno`
-FOR EACH ROW
-BEGIN
-    DECLARE done INT DEFAULT 0;
-    DECLARE item_id INT;
-    DECLARE item_cantidad DECIMAL(8, 2);
-    DECLARE item_contable BOOLEAN;
-
-    -- Cursor para recorrer los materiales de la práctica asignada
-    DECLARE cur CURSOR FOR
-        SELECT pm.fk_items_pm, pm.cantidad, pm.contable
-        FROM practicas_materiales pm
-        WHERE pm.fk_practicas_pm = (
-            SELECT pa.fk_practicas_pa
-            FROM practicas_asignadas pa
-            WHERE pa.id_pa = NEW.fk_pa_vale
-        );
-
-    -- Declarar un manejador para el final del cursor
-    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
-
-    OPEN cur;
-
-    read_loop: LOOP
-        FETCH cur INTO item_id, item_cantidad, item_contable;
-        IF done THEN
-            LEAVE read_loop;
-        END IF;
-
-        -- Solo acumular si el material es contable (contable = 1)
-        IF item_contable THEN
-            -- Verificar si ya existe un registro en vale_profesor para este material
-            IF EXISTS (
-                SELECT 1
-                FROM vale_profesor
-                WHERE fk_pa_vale_profesor = NEW.fk_pa_vale
-                AND fk_items_vale_profesor = item_id
-            ) THEN
-                -- Actualizar la cantidad acumulada
-                UPDATE vale_profesor
-                SET cantidad_acumulada = cantidad_acumulada + item_cantidad
-                WHERE fk_pa_vale_profesor = NEW.fk_pa_vale
-                AND fk_items_vale_profesor = item_id;
-            ELSE
-                -- Insertar un nuevo registro en vale_profesor
-                INSERT INTO vale_profesor (fk_pa_vale_profesor, fk_items_vale_profesor, cantidad_acumulada)
-                VALUES (NEW.fk_pa_vale, item_id, item_cantidad);
-            END IF;
-        END IF;
-    END LOOP;
-
-    CLOSE cur;
-END$$
-
-DELIMITER ;
-
  -- Contrasena de los usuarios: 123456
 INSERT INTO users (name, email, password) VALUES
  ('Jhon', 'dev@dev.com', '$2b$10$ryAHsRcpWxv34G3utMtRLev4UaVjUDuEeYbybkwt8MXB8tr0vWeMi'),
@@ -210,6 +152,11 @@ INSERT INTO users (name, email, password) VALUES
  ('Sam', 'user19@example.com', '$2b$10$ryAHsRcpWxv34G3utMtRLev4UaVjUDuEeYbybkwt8MXB8tr0vWeMi'),
  ('Tina', 'user20@example.com', '$2b$10$ryAHsRcpWxv34G3utMtRLev4UaVjUDuEeYbybkwt8MXB8tr0vWeMi');
 
+INSERT INTO users (name, email, password, rol) VALUES
+ ('Quincy', 'prof1@prof.com', '$2b$10$ryAHsRcpWxv34G3utMtRLev4UaVjUDuEeYbybkwt8MXB8tr0vWeMi','profesor'),
+ ('Rachel', 'prof2@prof.com', '$2b$10$ryAHsRcpWxv34G3utMtRLev4UaVjUDuEeYbybkwt8MXB8tr0vWeMi','profesor'),
+ ('Sam', 'prof3@prof.com', '$2b$10$ryAHsRcpWxv34G3utMtRLev4UaVjUDuEeYbybkwt8MXB8tr0vWeMi','profesor'),
+ ('Tina', 'prof4@prof.com', '$2b$10$ryAHsRcpWxv34G3utMtRLev4UaVjUDuEeYbybkwt8MXB8tr0vWeMi','profesor');
 
 INSERT INTO marcas (nombre) VALUES
 ('Generica'),
