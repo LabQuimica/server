@@ -1,7 +1,7 @@
 import pool from '../database.js';
 
-// Recuperar todas las practicas
-export async function getPracticas() {
+// Recuperar todas las practicas creadas
+export async function getPracticasCreadas() {
     try {
         const [results] = await pool.query(`
             SELECT 
@@ -29,8 +29,36 @@ export async function getPracticas() {
     }
 }
 
+// Recuperar todas las practicas asignadas
+export async function getPracticasAsignadas() {
+  try {
+      const [results] = await pool.query(`
+        SELECT 
+          p.id_practica,
+          u.name AS docente,
+          p.nombre AS nombre,
+          p.descripcion AS descripcion,
+          p.fecha_creacion,
+          p.fecha_modificacion,
+          g.nombre AS grupo,
+          g.semestre,
+          pa.status
+        FROM practicas_asignadas pa
+        JOIN practicas p ON pa.fk_practicas_pa = p.id_practica
+        JOIN users u ON p.fk_profesor_users_practica = u.id_user
+        JOIN grupo g ON pa.fk_grupo_pa = g.id_grupo;
+
+      `);
+      
+      return results;
+  } catch (error) {
+      console.error('Error al ejecutar la consulta:', error);
+      throw error;
+  }
+}
+
 // Crear una practica
-export async function crearPractica(nombre, descripcion, creadorId) {
+export async function crearPractica(nombre, descripcion, num_equipos, creadorId) {
     const [creador] = await pool.query(
       `SELECT id_user FROM users WHERE id_user = ? AND rol IN ('profesor', 'administrador')`,
       [creadorId]
@@ -42,9 +70,9 @@ export async function crearPractica(nombre, descripcion, creadorId) {
     
     const [result] = await pool.query(
       `INSERT INTO practicas 
-        (nombre, descripcion, fk_profesor_users_practica) 
-       VALUES (?, ?, ?)`,
-      [nombre, descripcion, creadorId]
+        (nombre, descripcion, num_equipos,fk_profesor_users_practica) 
+       VALUES (?, ?, ?, ?)`,
+      [nombre, descripcion, num_equipos, creadorId]
     );
     
     // Comprobar la practica creada
@@ -55,6 +83,7 @@ export async function crearPractica(nombre, descripcion, creadorId) {
         p.descripcion, 
         p.fecha_creacion, 
         p.fecha_modificacion,
+        p.num_equipos,
         u.name AS profesor_nombre,
         u.email AS profesor_email
       FROM practicas p
