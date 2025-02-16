@@ -1,5 +1,5 @@
 import express from 'express';
-import { getVales,updateVales } from '../querys/valeQuerys.js';
+import { getVales,getValeStatus,updateVales } from '../querys/valeQuerys.js';
 
 const valeRouter = express.Router();
 
@@ -25,6 +25,17 @@ valeRouter.post('/updateVales', async (req, res) => {
     } catch (error) {
         console.error('Error en /updateVales:', error);
         res.status(500).json({ error: 'Error interno del servidor' });
+    }
+});
+
+valeRouter.get('/getValesStatus', async (req, res) => {
+    const estado = req.query.estado;
+    try {
+        const vales = await getValeStatus(estado);
+        res.json(vales);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: error.message });
     }
 });
 
