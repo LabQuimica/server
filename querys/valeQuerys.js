@@ -36,10 +36,9 @@ export async function getValeStatus(estado) {
                 g.semestre,
                 va.status AS estado_vale,
                 va.observaciones AS observaciones_vale,
-                va.fecha_solicitada,
-                va.fecha_modificacion,
+                DATE_FORMAT(va.fecha_solicitada, '%d/%m/%Y %H:%i') AS fecha_solicitada,
                 u2.name AS profesor,
-                pa.status AS estado_practica
+                p.nombre AS nombre_practica
             FROM
                 vale_alumno va
             JOIN

@@ -103,7 +103,7 @@ CREATE TABLE `vale_alumno`(
     `id_vale` INT AUTO_INCREMENT PRIMARY KEY,
     `fk_pa_vale` INT NOT NULL,
     `fk_alumno_users_vale` INT NOT NULL COMMENT 'Usuario a quien es responsable',
-    `status` ENUM('pendiente', 'progreso', 'completada', 'cancelada') NOT NULL,
+    `status` ENUM('pendiente', 'progreso', 'completada', 'cancelada', 'incompleto') NOT NULL,
     `observaciones` VARCHAR(255),
     `fecha_solicitada` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `fecha_modificacion` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -302,9 +302,7 @@ INSERT INTO `vale_alumno` (`fk_pa_vale`, `fk_alumno_users_vale`, `status`, `obse
 (1, 22, 'pendiente', 'Revisión inicial pendiente'),
 (2, 23, 'progreso', 'En revisión detallada'),
 (3, 24, 'completada', 'Material recibido'),
-(4, 25, 'cancelada', 'Cancelado por falta de material');
-
-INSERT INTO `vale_alumno` (`fk_pa_vale`, `fk_alumno_users_vale`, `status`, `observaciones`) VALUES
+(4, 25, 'cancelada', 'Cancelado por falta de material'),
 (1, 1, 'pendiente', 'Pendiente de revisión adicional'),
 (2, 3, 'progreso', 'Se requiere validación extra'),
 (3, 2, 'completada', 'Entregado y confirmado'),
@@ -332,7 +330,17 @@ INSERT INTO `vale_alumno` (`fk_pa_vale`, `fk_alumno_users_vale`, `status`, `obse
 (1, 12, 'pendiente', 'Pendiente de evaluación'),
 (2, 15, 'progreso', 'Avanzando en el proceso'),
 (3, 20, 'completada', 'Cerrado con éxito'),
-(4, 24, 'cancelada', 'Anulación realizada por error administrativo');
+(4, 24, 'cancelada', 'Anulación realizada por error administrativo'),
+(1, 5, 'incompleto', 'Falta documentación del alumno'),
+(2, 4, 'incompleto', 'Error en los datos proporcionados'),
+(3, 3, 'incompleto', 'No se completó el proceso de validación'),
+(4, 2, 'incompleto', 'Material no disponible en el almacén'),
+(1, 1, 'incompleto', 'Pendiente de revisión por el profesor'),
+(2, 9, 'incompleto', 'Datos insuficientes para procesar'),
+(3, 8, 'incompleto', 'Requiere corrección en la solicitud'),
+(4, 7, 'incompleto', 'No cumple con los requisitos necesarios');
+
+
 
 -- #####################################
 --          FUNCIONES DE PRUEBA
