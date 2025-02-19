@@ -1,7 +1,7 @@
 Invoke-WebRequest -Uri "http://localhost:5000/auth/register" `
 -Method POST `
 -Headers @{ "Content-Type" = "application/json" } `
--Body '{"email":"admin@example.com","password":"admin123","name":"Admin"}'
+-Body '{"email":"msanchezz2100@alumno.ipn.mx","password":"Mike150403_IPN","name":"Miguel Angel", "rol":"profesor"}'
 
 
 

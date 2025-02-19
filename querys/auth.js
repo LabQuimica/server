@@ -2,7 +2,7 @@ import pool from '../database.js'
 import bycrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-export async function postRegister(email, password, name){
+export async function postRegister(email, password, name, rol = 'alumno') {
   // Verificar si el usuario ya existe
   const [existingUser] = await  pool.query("SELECT email FROM users WHERE email =  ?", [email]);
   if (existingUser.length > 0) {
@@ -12,8 +12,8 @@ export async function postRegister(email, password, name){
   // Insertar el nuevo usuario en la base de datos
   const hashedPassword = await bycrypt.hash(password, 10);
   const [result] = await pool.query(
-      "INSERT INTO users (email, password, name) VALUES (?, ?, ?)",
-      [email, hashedPassword, name]
+      "INSERT INTO users (email, password, name, rol) VALUES (?, ?, ?, ?)",
+      [email, hashedPassword, name, rol]
   );
   const user = await getUserById(result.insertId);
   return { user };
