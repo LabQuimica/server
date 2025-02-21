@@ -1,20 +1,10 @@
 import express from 'express';
-import { getVales,getValeStatus,updateVales } from '../querys/valeQuerys.js';
+import { getVales,getValeStatus,updateVales, queryValeAlumnoDetails } from '../querys/valeQuerys.js';
 
 const valeRouter = express.Router();
 
 valeRouter.get('/', (req, res) => {
     res.send('GET request to the homepage');
-});
-
-valeRouter.get('/getVales', async (req, res) => {
-    try {
-        const vales = await getVales();
-        res.json(vales);
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ error: error.message });
-    }
 });
 
 valeRouter.post('/updateVales', async (req, res) => {
@@ -43,4 +33,18 @@ valeRouter.get('/getAlumnoValeStatus', async (req, res) => {
     }
 });
 
+
+valeRouter.get('/getValeAlumnoDetails', async (req, res) => {
+    const { id_vale } = req.query;
+    if (!id_vale) {
+        return res.status(400).json({ error: "Falta el id del vale" });
+    }
+    try {
+        const vales = await queryValeAlumnoDetails(id_vale);
+        res.json(vales);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: "Error al obtener los detalles del vale" });
+    }
+});
 export default valeRouter;
