@@ -1,5 +1,5 @@
 import express from 'express';
-import { getVales,getValeStatus,updateVales, queryValeAlumnoDetails } from '../querys/valeQuerys.js';
+import {getValeStatus,updateVales, queryValeAlumnoDetails } from '../querys/valeQuerys.js';
 
 const valeRouter = express.Router();
 

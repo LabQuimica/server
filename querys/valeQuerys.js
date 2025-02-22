@@ -61,7 +61,7 @@ export async function getValeStatus(estado) {
     }
 }
 
-function transformarResultados(rows) {
+function valeDetailsObject(rows) {
     if (!rows || rows.length === 0) return null;
   
     // Extraer la información común del vale
@@ -134,7 +134,7 @@ export async function queryValeAlumnoDetails(id_vale){
             WHERE
                 va.id_vale = ?;`, [id_vale]
         );
-        return transformarResultados(rows);
+        return valeDetailsObject(rows);
     } catch (error) {
         console.error('Error al ejecutar la consulta:', error);
         throw error;
