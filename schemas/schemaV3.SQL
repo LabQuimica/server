@@ -155,6 +155,10 @@ INSERT INTO users (name, email, password, rol) VALUES
  ('Sam', 'prof3@prof.com', '$2b$10$ryAHsRcpWxv34G3utMtRLev4UaVjUDuEeYbybkwt8MXB8tr0vWeMi','profesor'),
  ('Tina', 'prof4@prof.com', '$2b$10$ryAHsRcpWxv34G3utMtRLev4UaVjUDuEeYbybkwt8MXB8tr0vWeMi','profesor');
 
+INSERT INTO users (name, email, password, rol) VALUES
+ ('Quincy', 'admin@admin.com', '$2b$10$ryAHsRcpWxv34G3utMtRLev4UaVjUDuEeYbybkwt8MXB8tr0vWeMi','administrador'),
+ ('Rachel', 'admin1@admin.com', '$2b$10$ryAHsRcpWxv34G3utMtRLev4UaVjUDuEeYbybkwt8MXB8tr0vWeMi','administrador');
+
 INSERT INTO marcas (nombre) VALUES
 ('Generica'),
 ('Dedutel'),
