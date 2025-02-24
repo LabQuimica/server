@@ -14,6 +14,7 @@ import alertRouter from './routes/itemsAlertRoutes.js';
 import practicaRouter from './routes/practicaRoutes.js';
 import docenteRouter from './routes/docentesRoutes.js';
 
+import manualRoutes from './routes/manualesRoutes.js';
 
 const corsOptions = {
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
@@ -34,6 +35,8 @@ app.use('/alerts', alertRouter);
 
 app.use('/practicas', practicaRouter);
 app.use('/docentes', docenteRouter);
+
+app.use("/api", manualRoutes); 
 
 // Manejo de errores global
 app.use(errorHandler);
