@@ -1,5 +1,5 @@
 import express from 'express';
-import {getValeStatus,updateVales, queryValeAlumnoDetails } from '../querys/valeQuerys.js';
+import {getValeStatus,updateVales, queryValeAlumnoDetails, getValeProfesorStatus} from '../querys/valeQuerys.js';
 
 const valeRouter = express.Router();
 
@@ -47,4 +47,34 @@ valeRouter.get('/getValeAlumnoDetails', async (req, res) => {
         res.status(500).json({ error: "Error al obtener los detalles del vale" });
     }
 });
+
+valeRouter.get('/getProfesorValeStatus', async (req, res) => {
+    const { estado } = req.query;
+    if (!["pendiente", "progreso", "completada", "cancelada"].includes(estado)) {
+        return res.status(400).json({ error: "Estado no válido" });
+      }
+    
+    try {
+        const vales = await getValeProfesorStatus(estado);
+        res.json(vales);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: "Error al obtener los vales" });
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 export default valeRouter;

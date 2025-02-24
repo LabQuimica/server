@@ -244,19 +244,19 @@ INSERT INTO grupo_alumnos (fk_grupo_ga, fk_alumno_users_ga) VALUES
 (1, 5),
 (2, 5);
 INSERT INTO `items` (`fk_marca_item`, `num_serie`, `nombre`, `tipo`, `ubicacion`, `cantidad`, `observacion`, `especial`) VALUES
-(1, '123456', 'Kit de Biología', 'kits', 'Aula 1', 5.00, 'Kit de biología básico', 'https:'),
-(1, '123457', 'Kit de Física', 'kits', 'Aula 2', 10.00, 'Kit de física básico', 'https://'),
-(1, '123458', 'Kit de Química', 'kits', 'Aula 3', 15.00, 'Kit de química básico', 'https://www.google.com'),
-(1, '123459', 'Sensor de Temperatura', 'sensores', 'Laboratorio 1', 3.00, 'Sensor de temperatura para medir en grados Celsius', 'https://www.google.com'),
-(2, '123460', 'Sensor de Luz', 'sensores', 'Laboratorio 2', 6.00, 'Sensor de luz para medir en lux', 'https://www.google.com'),
-(2, '123461', 'Sensor de Sonido', 'sensores', 'Laboratorio 3', 9.00, 'Sensor de sonido para medir en decibeles', 'Frasco ámbar'),
-(2, '123462', 'Ácido Clorhídrico', 'liquidos', 'Almacén 1', 2.00, 'Acido clorhídrico', 'https://www.google.com'),
-(3, '123463', 'Sulfato de Cobre', 'solidos', 'Almacén 2', 4.00, 'Sulfato de cobre', 'Bote de plástico'),
-(3, '123464', 'Sulfato de Magnesio', 'solidos', 'Almacén 3', 6.00, 'Sulfato de magnesio', 'Bote de plástico'),
-(3, '123465', 'Sulfato de Zinc', 'solidos', 'Almacén 4', 6.00, 'Sulfato de zinc', 'Bote de plástico'),
-(4, '123466', 'Sulfato de Hierro', 'solidos', 'Almacén 5', 6.00, 'Sulfato de hierro', 'Bote de plástico'),
-(4, '123467', 'Sulfato de Plata', 'solidos', 'Almacén 6', 6.00, 'Sulfato de plata', 'Bote de plástico'),
-(4, '123468', 'Sulfato de Aluminio', 'solidos', 'Almacén 7', 6.00, 'Sulfato de aluminio', 'Bote de plástico');
+(1, '123456', 'Kit de Biología', 'kits', 'Aula 1', 50.00, 'Kit de biología básico', 'https:'),
+(1, '123457', 'Kit de Física', 'kits', 'Aula 2', 100.00, 'Kit de física básico', 'https://'),
+(1, '123458', 'Kit de Química', 'kits', 'Aula 3', 150.00, 'Kit de química básico', 'https://www.google.com'),
+(1, '123459', 'Sensor de Temperatura', 'sensores', 'Laboratorio 1', 30.00, 'Sensor de temperatura para medir en grados Celsius', 'https://www.google.com'),
+(2, '123460', 'Sensor de Luz', 'sensores', 'Laboratorio 2', 60.00, 'Sensor de luz para medir en lux', 'https://www.google.com'),
+(2, '123461', 'Sensor de Sonido', 'sensores', 'Laboratorio 3', 90.00, 'Sensor de sonido para medir en decibeles', 'Frasco ámbar'),
+(2, '123462', 'Ácido Clorhídrico', 'liquidos', 'Almacén 1', 20.00, 'Acido clorhídrico', 'https://www.google.com'),
+(3, '123463', 'Sulfato de Cobre', 'solidos', 'Almacén 2', 40.00, 'Sulfato de cobre', 'Bote de plástico'),
+(3, '123464', 'Sulfato de Magnesio', 'solidos', 'Almacén 3', 60.00, 'Sulfato de magnesio', 'Bote de plástico'),
+(3, '123465', 'Sulfato de Zinc', 'solidos', 'Almacén 4', 60.00, 'Sulfato de zinc', 'Bote de plástico'),
+(4, '123466', 'Sulfato de Hierro', 'solidos', 'Almacén 5', 60.00, 'Sulfato de hierro', 'Bote de plástico'),
+(4, '123467', 'Sulfato de Plata', 'solidos', 'Almacén 6', 60.00, 'Sulfato de plata', 'Bote de plástico'),
+(4, '123468', 'Sulfato de Aluminio', 'solidos', 'Almacén 7', 60.00, 'Sulfato de aluminio', 'Bote de plástico');
 
 
 INSERT INTO `practicas` (`fk_profesor_users_practica`, `nombre`, `descripcion` , `num_equipos`) VALUES

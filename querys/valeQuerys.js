@@ -140,3 +140,35 @@ export async function queryValeAlumnoDetails(id_vale){
         throw error;
     }
 }
+
+// Profesor
+
+export async function getValeProfesorStatus(estado) {
+    try {
+        const [rows] = await pool.query(`
+            SELECT
+                pa.id_pa,
+                u.name AS nombre_profesor,
+                g.nombre AS nombre_materia,
+                g.semestre,
+                DATE_FORMAT(pa.fecha_asignada, '%d/%m/%Y %H:%i') AS fecha_asignada,
+                DATE_FORMAT(pa.fecha_entrega, '%d/%m/%Y %H:%i') AS fecha_entrega,
+                p.nombre AS nombre_practica,
+                pa.status AS status_practica
+            FROM
+                practicas_asignadas pa
+            JOIN
+                practicas p ON pa.fk_practicas_pa = p.id_practica
+            JOIN
+                users u ON p.fk_profesor_users_practica = u.id_user
+            JOIN
+                grupo g ON pa.fk_grupo_pa = g.id_grupo
+            WHERE
+                pa.status = ?;`, [estado]
+        );
+        return rows;
+    } catch (error) {
+        console.error('Error al ejecutar la consulta:', error);
+        throw error;
+    }
+}
