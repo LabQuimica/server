@@ -10,6 +10,39 @@ export async function getVales() {
         throw error;
     }
 }
+export async function updateValeWithStatusAndComment(id_vale, newStatus, newObservation) {
+    await pool.query(
+       'UPDATE vale_alumno SET status = ?, observaciones = ? WHERE id_vale = ?;',
+        [newStatus, newObservation, id_vale]
+    );
+    return {
+      status: 200,
+      data: { message: `Vale ${id_vale} actualizado con nuevo estado y comentario` },
+    };
+  }
+  
+export async function updateValeWithStatus(id_vale, newStatus) {
+    await pool.query(
+        'UPDATE vale_alumno SET status = ? WHERE id_vale = ?;',
+         [newStatus, id_vale]
+     );
+    return {
+      status: 200,
+      data: { message: `Vale ${id_vale} actualizado con nuevo estado` },
+    };
+  }
+  
+export async function updateValeWithComment(id_vale, newObservation) {
+    await pool.query(
+        'UPDATE vale_alumno SET observaciones = ? WHERE id_vale = ?;',
+         [newObservation, id_vale]
+     );
+    return {
+      status: 200,
+      data: { message: `Vale ${id_vale} actualizado con nuevo comentario` },
+    };
+  }
+  
 export async function updateVales(vales) {
     try {
         for (const vale of vales) {

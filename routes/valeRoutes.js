@@ -1,5 +1,5 @@
 import express from 'express';
-import {getValeStatus,updateVales, queryValeAlumnoDetails, getValeProfesorStatus} from '../querys/valeQuerys.js';
+import {getValeStatus,updateValeWithStatusAndComment, updateValeWithStatus, updateValeWithComment, queryValeAlumnoDetails, getValeProfesorStatus} from '../querys/valeQuerys.js';
 
 const valeRouter = express.Router();
 
@@ -10,14 +10,32 @@ valeRouter.get('/', (req, res) => {
 valeRouter.post('/updateVales', async (req, res) => {
     const data = req.body;
     try {
-        const response = await updateVales(data);
-        res.status(response.status).json(response.data);
+      const responses = [];
+      for (const change of data) {
+        if (change.newStatus && change.newObservation) {
+          // Caso 1: Actualización de estado y comentario
+          const response = await updateValeWithStatusAndComment(change.id_vale, change.newStatus, change.newObservation);
+          responses.push(response);
+        } else if (change.newStatus) {
+          // Caso 2: Actualización solo de estado
+          const response = await updateValeWithStatus(change.id_vale, change.newStatus);
+          responses.push(response);
+        } else if (change.newObservation) {
+          // Caso 3: Actualización solo de comentario
+          const response = await updateValeWithComment(change.id_vale, change.newObservation);
+          responses.push(response);
+        }
+      }
+  
+      res.status(200).json({
+        message: 'Vales actualizados correctamente',
+        responses,
+      });
     } catch (error) {
-        console.error('Error en /updateVales:', error);
-        res.status(500).json({ error: 'Error interno del servidor' });
+      console.error('Error en /updateVales:', error);
+      res.status(500).json({ error: 'Error interno del servidor' });
     }
-});
-
+  });
 valeRouter.get('/getAlumnoValeStatus', async (req, res) => {
     const { estado } = req.query;
     if (!["pendiente", "progreso", "completada", "cancelada", "incompleto"].includes(estado)) {
