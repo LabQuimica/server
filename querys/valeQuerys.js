@@ -224,35 +224,41 @@ export async function getValeProfesorDetails(id_practica_asignada) {
   try {
     const [rows] = await pool.query(
       `
-          SELECT
-              pa.id_pa AS id_practica_asignada,
-              pa.status AS status_practica,
-              DATE_FORMAT(pa.fecha_asignada, '%d/%m/%Y %H:%i') AS fecha_asignada,
-              DATE_FORMAT(pa.fecha_entrega, '%d/%m/%Y %H:%i') AS fecha_entrega,
-              g.nombre AS nombre_grupo,
-              g.semestre AS semestre_grupo,
-              i.id_item,
-              i.nombre AS nombre_item,
-              i.tipo AS tipo_item,
-              i.cantidad AS cantidad_disponible,
-              i.ubicacion,
-              pm.cantidad AS cantidad_unitaria,
-              pm.contable,
-              CASE
-                  WHEN pm.contable = TRUE THEN pm.cantidad * p.num_equipos
-                  ELSE pm.cantidad
-              END AS cantidad_total_necesaria
-          FROM
-              practicas_asignadas pa
-          JOIN
-              practicas p ON pa.fk_practicas_pa = p.id_practica
-          JOIN
-              practicas_materiales pm ON p.id_practica = pm.fk_practicas_pm
-          JOIN
-              items i ON pm.fk_items_pm = i.id_item
-          JOIN
-              grupo g ON pa.fk_grupo_pa = g.id_grupo
-          WHERE
+      SELECT
+          u.name AS nombre_usuario,
+          u.email,
+          p.nombre AS nombre_practica,
+          p.id_practica as id_practica,
+          pa.id_pa AS id_practica_asignada,
+          pa.status AS status_practica,
+          DATE_FORMAT(pa.fecha_asignada, '%d/%m/%Y %H:%i') AS fecha_asignada,
+          DATE_FORMAT(pa.fecha_entrega, '%d/%m/%Y %H:%i') AS fecha_entrega,
+          g.nombre AS nombre_grupo,
+          g.semestre AS semestre_grupo,
+          i.id_item,
+          i.nombre AS nombre_item,
+          i.tipo AS tipo_item,
+          i.cantidad AS cantidad_disponible,
+          i.ubicacion,
+          pm.cantidad AS cantidad_unitaria,
+          pm.contable,
+          CASE
+              WHEN pm.contable = TRUE THEN pm.cantidad * p.num_equipos
+              ELSE pm.cantidad
+          END AS cantidad_total_necesaria
+      FROM
+          practicas_asignadas pa
+      JOIN
+          practicas p ON pa.fk_practicas_pa = p.id_practica
+      JOIN
+          practicas_materiales pm ON p.id_practica = pm.fk_practicas_pm
+      JOIN
+          items i ON pm.fk_items_pm = i.id_item
+      JOIN
+          grupo g ON pa.fk_grupo_pa = g.id_grupo
+      JOIN
+          users u ON p.fk_profesor_users_practica = u.id_user
+      WHERE
               pa.id_pa = ?;`,
       [id_practica_asignada]
     );
@@ -260,6 +266,10 @@ export async function getValeProfesorDetails(id_practica_asignada) {
     if (rows.length === 0) return null;
 
     const practica = {
+      nombre_usuario: rows[0].nombre_usuario,
+      email: rows[0].email,
+      nombre_practica: rows[0].nombre_practica,
+      id_practica: rows[0].id_practica,
       id_practica_asignada: rows[0].id_practica_asignada,
       status_practica: rows[0].status_practica,
       fecha_asignada: rows[0].fecha_asignada,
