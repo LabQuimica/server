@@ -1,12 +1,15 @@
 import express from 'express';
 import fetch from 'node-fetch';
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const manualRoutes = express.Router();
 
-const API_KEY = "AIzaSyBPwojlt4qo7_R6jZzcXAXUX02LT2TCEC8";
-const FOLDER_ID = "1rGhTFyjo4j3UrAMUITE11lX7aHtRS76V";
+const API_KEY = process.env.API_KEY;
 
-// Endpoint para obtener archivos de Google Drive
+const FOLDER_ID = "1rGhTFyjo4j3UrAMUITE11lX7aHtRS76V"; // ID de la carpeta de Google Drive
+
 manualRoutes.get("/drive-files", async (req, res) => {
   try {
     const response = await fetch(
