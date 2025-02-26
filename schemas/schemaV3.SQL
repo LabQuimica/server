@@ -111,15 +111,6 @@ CREATE TABLE `vale_alumno`(
     FOREIGN KEY (`fk_alumno_users_vale`) REFERENCES `users`(`id_user`)
 ) ENGINE=InnoDB;
 
-CREATE TABLE `vale_profesor` (
-    `id_vale_profesor` INT AUTO_INCREMENT PRIMARY KEY,
-    `fk_pa_vale_profesor` INT NOT NULL COMMENT 'Práctica asignada a la que pertenece',
-    `fk_items_vale_profesor` INT NOT NULL COMMENT 'Material asociado',
-    `cantidad_acumulada` DECIMAL(8, 2) NOT NULL DEFAULT 0 COMMENT 'Cantidad acumulada de este material',
-    `fecha_modificacion` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (`fk_pa_vale_profesor`) REFERENCES `practicas_asignadas`(`id_pa`),
-    FOREIGN KEY (`fk_items_vale_profesor`) REFERENCES `items`(`id_item`)
-) ENGINE=InnoDB;
 
  -- Contrasena de los usuarios: 123456
 INSERT INTO users (name, email, password) VALUES
