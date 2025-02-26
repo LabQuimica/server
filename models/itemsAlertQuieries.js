@@ -2,12 +2,13 @@
 export const infoItems = `
 SELECT 
     items.nombre, 
-    items.cantidad
+    items.cantidad,
+    items.tipo
 FROM 
     items 
 WHERE 
     tipo 
 IN
-    ('solidos', 'liquidos', 'materiales');
+    ('solidos', 'liquidos');
 
 `;
