@@ -6,8 +6,8 @@ SELECT
     g.semestre,
     va.status AS estado_vale,
     va.observaciones AS observaciones_vale,
-    va.fecha_solicitada,
-    va.fecha_modificacion,
+    DATE_FORMAT(va.fecha_solicitada, '%d/%m/%Y %H:%i') AS fecha_solicitada,
+    DATE_FORMAT(va.fecha_modificacion, '%d/%m/%Y %H:%i') AS fecha_modificacion,
     u2.name AS profesor,
     pa.status AS estado_practica
 FROM

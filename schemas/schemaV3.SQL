@@ -103,7 +103,7 @@ CREATE TABLE `vale_alumno`(
     `id_vale` INT AUTO_INCREMENT PRIMARY KEY,
     `fk_pa_vale` INT NOT NULL,
     `fk_alumno_users_vale` INT NOT NULL COMMENT 'Usuario a quien es responsable',
-    `status` ENUM('pendiente', 'progreso', 'completada', 'cancelada') NOT NULL,
+    `status` ENUM('pendiente', 'progreso', 'completada', 'cancelada', 'incompleto') NOT NULL,
     `observaciones` VARCHAR(255),
     `fecha_solicitada` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `fecha_modificacion` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -111,15 +111,6 @@ CREATE TABLE `vale_alumno`(
     FOREIGN KEY (`fk_alumno_users_vale`) REFERENCES `users`(`id_user`)
 ) ENGINE=InnoDB;
 
-CREATE TABLE `vale_profesor` (
-    `id_vale_profesor` INT AUTO_INCREMENT PRIMARY KEY,
-    `fk_pa_vale_profesor` INT NOT NULL COMMENT 'Práctica asignada a la que pertenece',
-    `fk_items_vale_profesor` INT NOT NULL COMMENT 'Material asociado',
-    `cantidad_acumulada` DECIMAL(8, 2) NOT NULL DEFAULT 0 COMMENT 'Cantidad acumulada de este material',
-    `fecha_modificacion` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (`fk_pa_vale_profesor`) REFERENCES `practicas_asignadas`(`id_pa`),
-    FOREIGN KEY (`fk_items_vale_profesor`) REFERENCES `items`(`id_item`)
-) ENGINE=InnoDB;
 
  -- Contrasena de los usuarios: 123456
 INSERT INTO users (name, email, password) VALUES
@@ -154,6 +145,10 @@ INSERT INTO users (name, email, password, rol) VALUES
  ('Rachel', 'prof2@prof.com', '$2b$10$ryAHsRcpWxv34G3utMtRLev4UaVjUDuEeYbybkwt8MXB8tr0vWeMi','profesor'),
  ('Sam', 'prof3@prof.com', '$2b$10$ryAHsRcpWxv34G3utMtRLev4UaVjUDuEeYbybkwt8MXB8tr0vWeMi','profesor'),
  ('Tina', 'prof4@prof.com', '$2b$10$ryAHsRcpWxv34G3utMtRLev4UaVjUDuEeYbybkwt8MXB8tr0vWeMi','profesor');
+
+INSERT INTO users (name, email, password, rol) VALUES
+ ('Quincy', 'admin@admin.com', '$2b$10$ryAHsRcpWxv34G3utMtRLev4UaVjUDuEeYbybkwt8MXB8tr0vWeMi','administrador'),
+ ('Rachel', 'admin1@admin.com', '$2b$10$ryAHsRcpWxv34G3utMtRLev4UaVjUDuEeYbybkwt8MXB8tr0vWeMi','administrador');
 
 INSERT INTO marcas (nombre) VALUES
 ('Generica'),
@@ -240,19 +235,19 @@ INSERT INTO grupo_alumnos (fk_grupo_ga, fk_alumno_users_ga) VALUES
 (1, 5),
 (2, 5);
 INSERT INTO `items` (`fk_marca_item`, `num_serie`, `nombre`, `tipo`, `ubicacion`, `cantidad`, `observacion`, `especial`) VALUES
-(1, '123456', 'Kit de Biología', 'kits', 'Aula 1', 5.00, 'Kit de biología básico', 'https:'),
-(1, '123457', 'Kit de Física', 'kits', 'Aula 2', 10.00, 'Kit de física básico', 'https://'),
-(1, '123458', 'Kit de Química', 'kits', 'Aula 3', 15.00, 'Kit de química básico', 'https://www.google.com'),
-(1, '123459', 'Sensor de Temperatura', 'sensores', 'Laboratorio 1', 3.00, 'Sensor de temperatura para medir en grados Celsius', 'https://www.google.com'),
-(2, '123460', 'Sensor de Luz', 'sensores', 'Laboratorio 2', 6.00, 'Sensor de luz para medir en lux', 'https://www.google.com'),
-(2, '123461', 'Sensor de Sonido', 'sensores', 'Laboratorio 3', 9.00, 'Sensor de sonido para medir en decibeles', 'Frasco ámbar'),
-(2, '123462', 'Ácido Clorhídrico', 'liquidos', 'Almacén 1', 2.00, 'Acido clorhídrico', 'https://www.google.com'),
-(3, '123463', 'Sulfato de Cobre', 'solidos', 'Almacén 2', 4.00, 'Sulfato de cobre', 'Bote de plástico'),
-(3, '123464', 'Sulfato de Magnesio', 'solidos', 'Almacén 3', 6.00, 'Sulfato de magnesio', 'Bote de plástico'),
-(3, '123465', 'Sulfato de Zinc', 'solidos', 'Almacén 4', 6.00, 'Sulfato de zinc', 'Bote de plástico'),
-(4, '123466', 'Sulfato de Hierro', 'solidos', 'Almacén 5', 6.00, 'Sulfato de hierro', 'Bote de plástico'),
-(4, '123467', 'Sulfato de Plata', 'solidos', 'Almacén 6', 6.00, 'Sulfato de plata', 'Bote de plástico'),
-(4, '123468', 'Sulfato de Aluminio', 'solidos', 'Almacén 7', 6.00, 'Sulfato de aluminio', 'Bote de plástico');
+(1, '123456', 'Kit de Biología', 'kits', 'Aula 1', 50.00, 'Kit de biología básico', 'https:'),
+(1, '123457', 'Kit de Física', 'kits', 'Aula 2', 100.00, 'Kit de física básico', 'https://'),
+(1, '123458', 'Kit de Química', 'kits', 'Aula 3', 150.00, 'Kit de química básico', 'https://www.google.com'),
+(1, '123459', 'Sensor de Temperatura', 'sensores', 'Laboratorio 1', 30.00, 'Sensor de temperatura para medir en grados Celsius', 'https://www.google.com'),
+(2, '123460', 'Sensor de Luz', 'sensores', 'Laboratorio 2', 60.00, 'Sensor de luz para medir en lux', 'https://www.google.com'),
+(2, '123461', 'Sensor de Sonido', 'sensores', 'Laboratorio 3', 90.00, 'Sensor de sonido para medir en decibeles', 'Frasco ámbar'),
+(2, '123462', 'Ácido Clorhídrico', 'liquidos', 'Almacén 1', 20.00, 'Acido clorhídrico', 'https://www.google.com'),
+(3, '123463', 'Sulfato de Cobre', 'solidos', 'Almacén 2', 40.00, 'Sulfato de cobre', 'Bote de plástico'),
+(3, '123464', 'Sulfato de Magnesio', 'solidos', 'Almacén 3', 60.00, 'Sulfato de magnesio', 'Bote de plástico'),
+(3, '123465', 'Sulfato de Zinc', 'solidos', 'Almacén 4', 60.00, 'Sulfato de zinc', 'Bote de plástico'),
+(4, '123466', 'Sulfato de Hierro', 'solidos', 'Almacén 5', 60.00, 'Sulfato de hierro', 'Bote de plástico'),
+(4, '123467', 'Sulfato de Plata', 'solidos', 'Almacén 6', 60.00, 'Sulfato de plata', 'Bote de plástico'),
+(4, '123468', 'Sulfato de Aluminio', 'solidos', 'Almacén 7', 60.00, 'Sulfato de aluminio', 'Bote de plástico');
 
 
 INSERT INTO `practicas` (`fk_profesor_users_practica`, `nombre`, `descripcion` , `num_equipos`) VALUES
@@ -302,9 +297,7 @@ INSERT INTO `vale_alumno` (`fk_pa_vale`, `fk_alumno_users_vale`, `status`, `obse
 (1, 22, 'pendiente', 'Revisión inicial pendiente'),
 (2, 23, 'progreso', 'En revisión detallada'),
 (3, 24, 'completada', 'Material recibido'),
-(4, 25, 'cancelada', 'Cancelado por falta de material');
-
-INSERT INTO `vale_alumno` (`fk_pa_vale`, `fk_alumno_users_vale`, `status`, `observaciones`) VALUES
+(4, 25, 'cancelada', 'Cancelado por falta de material'),
 (1, 1, 'pendiente', 'Pendiente de revisión adicional'),
 (2, 3, 'progreso', 'Se requiere validación extra'),
 (3, 2, 'completada', 'Entregado y confirmado'),
@@ -332,7 +325,17 @@ INSERT INTO `vale_alumno` (`fk_pa_vale`, `fk_alumno_users_vale`, `status`, `obse
 (1, 12, 'pendiente', 'Pendiente de evaluación'),
 (2, 15, 'progreso', 'Avanzando en el proceso'),
 (3, 20, 'completada', 'Cerrado con éxito'),
-(4, 24, 'cancelada', 'Anulación realizada por error administrativo');
+(4, 24, 'cancelada', 'Anulación realizada por error administrativo'),
+(1, 5, 'incompleto', 'Falta documentación del alumno'),
+(2, 4, 'incompleto', 'Error en los datos proporcionados'),
+(3, 3, 'incompleto', 'No se completó el proceso de validación'),
+(4, 2, 'incompleto', 'Material no disponible en el almacén'),
+(1, 1, 'incompleto', 'Pendiente de revisión por el profesor'),
+(2, 9, 'incompleto', 'Datos insuficientes para procesar'),
+(3, 8, 'incompleto', 'Requiere corrección en la solicitud'),
+(4, 7, 'incompleto', 'No cumple con los requisitos necesarios');
+
+
 
 -- #####################################
 --          FUNCIONES DE PRUEBA
