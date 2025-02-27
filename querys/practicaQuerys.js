@@ -58,7 +58,7 @@ export async function getPracticasAsignadas() {
 }
 
 // Crear una practica
-export async function crearPractica(nombre, descripcion, num_equipos, creadorId) {
+export async function crearPractica(nombre, descripcion, num_equipos, creadorId, materiales) {
     const [creador] = await pool.query(
       `SELECT id_user FROM users WHERE id_user = ? AND rol IN ('profesor', 'administrador')`,
       [creadorId]
@@ -74,6 +74,20 @@ export async function crearPractica(nombre, descripcion, num_equipos, creadorId)
        VALUES (?, ?, ?, ?)`,
       [nombre, descripcion, num_equipos, creadorId]
     );
+
+    const practicaId = result.insertId;
+
+    // Agregar materiales de practica
+    if (materiales && materiales.length > 0) {
+      const valores = materiales.map(({ itemId, cantidad }) => 
+          [practicaId, itemId, cantidad]
+      );
+
+      await pool.query(
+          `INSERT INTO practicas_materiales (fk_practicas_pm, fk_items_pm, cantidad) VALUES ?`,
+          [valores]
+      );
+  }
     
     // Comprobar la practica creada
     const [newPractice] = await pool.query(`
@@ -146,4 +160,15 @@ export async function deletePractica(practiceId, profesorId) {
     } finally {
       connection.release();
     }
-  }
+}
+
+export async function asignarPractica(practica, grupo, fecha_inicio, fehca_fin) {
+  const [results] = await pool.query(`
+    INSERT INTO practicas_asignadas (fk_practicas_pa, fk_grupo_pa, fecha_inicio, fecha_fin)
+    VALUES (?, ?, ?, ?);
+    `,
+    [practica, grupo, fecha_inicio, fehca_fin]
+  );
+
+  return results[0];
+}

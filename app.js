@@ -13,6 +13,8 @@ import alertRouter from './routes/itemsAlertRoutes.js';
   
 import practicaRouter from './routes/practicaRoutes.js';
 import docenteRouter from './routes/docentesRoutes.js';
+import materialesRouter from './routes/materialesRoutes.js';
+import gruposRouter from './routes/gruposRoutes.js';
 
 
 const corsOptions = {
@@ -34,6 +36,8 @@ app.use('/alerts', alertRouter);
 
 app.use('/practicas', practicaRouter);
 app.use('/docentes', docenteRouter);
+app.use('/materiales', materialesRouter);
+app.use('/grupos', gruposRouter);
 
 // Manejo de errores global
 app.use(errorHandler);
