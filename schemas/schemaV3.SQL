@@ -91,7 +91,7 @@ CREATE TABLE `practicas_asignadas`(
     `id_pa` INT AUTO_INCREMENT PRIMARY KEY,
     `fk_practicas_pa` INT NOT NULL,
     `fk_grupo_pa` TINYINT NOT NULL COMMENT 'grupo a quien le asigno la practica',
-    `fecha_inicio` TIMESTAMP,
+    `fecha_inicio` TIMESTAMP NOT NULL,
     `fecha_fin` TIMESTAMP NOT NULL,
     `fecha_asignada` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `status` ENUM('pendiente', 'progreso', 'completada', 'cancelada') NOT NULL DEFAULT 'pendiente',
@@ -707,76 +707,77 @@ INSERT INTO `practicas_materiales` (`fk_practicas_pm`, `fk_items_pm`, `cantidad`
 (43, 26, 4.00, TRUE);
 
 
-INSERT INTO `practicas_asignadas` (`fk_practicas_pa`, `fk_grupo_pa`, `fecha_fin`, `status`) VALUES
+INSERT INTO `practicas_asignadas` (`fk_practicas_pa`, `fk_grupo_pa`, `fecha_inicio`, `fecha_fin`, `status`) VALUES
 -- Asignaciones para el grupo 1
-(1, 1, '2025-01-27', 'pendiente'),
-(2, 1, '2025-02-01', 'progreso'),
-(3, 1, '2025-02-05', 'completada'),
-(4, 1, '2025-02-10', 'cancelada'),
-(5, 1, '2025-02-15', 'pendiente'),
+(1, 1, '2025-01-27 08:00:00', '2025-01-27 10:00:00', 'pendiente'),
+(2, 1, '2025-02-01 09:00:00', '2025-02-01 11:00:00', 'progreso'),
+(3, 1, '2025-02-05 10:00:00', '2025-02-05 12:00:00', 'completada'),
+(4, 1, '2025-02-10 11:00:00', '2025-02-10 13:00:00', 'cancelada'),
+(5, 1, '2025-02-15 12:00:00', '2025-02-15 14:00:00', 'pendiente'),
 
 -- Asignaciones para el grupo 2
-(6, 2, '2025-01-28', 'progreso'),
-(7, 2, '2025-02-02', 'completada'),
-(8, 2, '2025-02-06', 'cancelada'),
-(9, 2, '2025-02-11', 'pendiente'),
-(10, 2, '2025-02-16', 'progreso'),
+(6, 2, '2025-01-28 08:00:00', '2025-01-28 10:00:00', 'progreso'),
+(7, 2, '2025-02-02 09:00:00', '2025-02-02 11:00:00', 'completada'),
+(8, 2, '2025-02-06 10:00:00', '2025-02-06 12:00:00', 'cancelada'),
+(9, 2, '2025-02-11 11:00:00', '2025-02-11 13:00:00', 'pendiente'),
+(10, 2, '2025-02-16 12:00:00', '2025-02-16 14:00:00', 'progreso'),
 
 -- Asignaciones para el grupo 3
-(11, 3, '2025-01-29', 'completada'),
-(12, 3, '2025-02-03', 'cancelada'),
-(13, 3, '2025-02-07', 'pendiente'),
-(14, 3, '2025-02-12', 'progreso'),
-(15, 3, '2025-02-17', 'completada'),
+(11, 3, '2025-01-29 08:00:00', '2025-01-29 10:00:00', 'completada'),
+(12, 3, '2025-02-03 09:00:00', '2025-02-03 11:00:00', 'cancelada'),
+(13, 3, '2025-02-07 10:00:00', '2025-02-07 12:00:00', 'pendiente'),
+(14, 3, '2025-02-12 11:00:00', '2025-02-12 13:00:00', 'progreso'),
+(15, 3, '2025-02-17 12:00:00', '2025-02-17 14:00:00', 'completada'),
 
 -- Asignaciones para el grupo 4
-(16, 4, '2025-01-30', 'cancelada'),
-(17, 4, '2025-02-04', 'pendiente'),
-(18, 4, '2025-02-08', 'progreso'),
-(19, 4, '2025-02-13', 'completada'),
-(20, 4, '2025-02-18', 'cancelada'),
+(16, 4, '2025-01-30 08:00:00', '2025-01-30 10:00:00', 'cancelada'),
+(17, 4, '2025-02-04 09:00:00', '2025-02-04 11:00:00', 'pendiente'),
+(18, 4, '2025-02-08 10:00:00', '2025-02-08 12:00:00', 'progreso'),
+(19, 4, '2025-02-13 11:00:00', '2025-02-13 13:00:00', 'completada'),
+(20, 4, '2025-02-18 12:00:00', '2025-02-18 14:00:00', 'cancelada'),
 
 -- Asignaciones para el grupo 5
-(21, 5, '2025-01-31', 'pendiente'),
-(22, 5, '2025-02-05', 'progreso'),
-(23, 5, '2025-02-09', 'completada'),
-(24, 5, '2025-02-14', 'cancelada'),
-(25, 5, '2025-02-19', 'pendiente'),
+(21, 5, '2025-01-31 08:00:00', '2025-01-31 10:00:00', 'pendiente'),
+(22, 5, '2025-02-05 09:00:00', '2025-02-05 11:00:00', 'progreso'),
+(23, 5, '2025-02-09 10:00:00', '2025-02-09 12:00:00', 'completada'),
+(24, 5, '2025-02-14 11:00:00', '2025-02-14 13:00:00', 'cancelada'),
+(25, 5, '2025-02-19 12:00:00', '2025-02-19 14:00:00', 'pendiente'),
 
 -- Asignaciones para el grupo 6
-(26, 6, '2025-02-01', 'progreso'),
-(27, 6, '2025-02-06', 'completada'),
-(28, 6, '2025-02-10', 'cancelada'),
-(29, 6, '2025-02-15', 'pendiente'),
-(30, 6, '2025-02-20', 'progreso'),
+(26, 6, '2025-02-01 08:00:00', '2025-02-01 10:00:00', 'progreso'),
+(27, 6, '2025-02-06 09:00:00', '2025-02-06 11:00:00', 'completada'),
+(28, 6, '2025-02-10 10:00:00', '2025-02-10 12:00:00', 'cancelada'),
+(29, 6, '2025-02-15 11:00:00', '2025-02-15 13:00:00', 'pendiente'),
+(30, 6, '2025-02-20 12:00:00', '2025-02-20 14:00:00', 'progreso'),
 
 -- Asignaciones para el grupo 7
-(31, 7, '2025-02-02', 'completada'),
-(32, 7, '2025-02-07', 'cancelada'),
-(33, 7, '2025-02-11', 'pendiente'),
-(34, 7, '2025-02-16', 'progreso'),
-(35, 7, '2025-02-21', 'completada'),
+(31, 7, '2025-02-02 08:00:00', '2025-02-02 10:00:00', 'completada'),
+(32, 7, '2025-02-07 09:00:00', '2025-02-07 11:00:00', 'cancelada'),
+(33, 7, '2025-02-11 10:00:00', '2025-02-11 12:00:00', 'pendiente'),
+(34, 7, '2025-02-16 11:00:00', '2025-02-16 13:00:00', 'progreso'),
+(35, 7, '2025-02-21 12:00:00', '2025-02-21 14:00:00', 'completada'),
 
 -- Asignaciones para el grupo 8
-(36, 8, '2025-02-03', 'cancelada'),
-(37, 8, '2025-02-08', 'pendiente'),
-(38, 8, '2025-02-12', 'progreso'),
-(39, 8, '2025-02-17', 'completada'),
-(40, 8, '2025-02-22', 'cancelada'),
+(36, 8, '2025-02-03 08:00:00', '2025-02-03 10:00:00', 'cancelada'),
+(37, 8, '2025-02-08 09:00:00', '2025-02-08 11:00:00', 'pendiente'),
+(38, 8, '2025-02-12 10:00:00', '2025-02-12 12:00:00', 'progreso'),
+(39, 8, '2025-02-17 11:00:00', '2025-02-17 13:00:00', 'completada'),
+(40, 8, '2025-02-22 12:00:00', '2025-02-22 14:00:00', 'cancelada'),
 
 -- Asignaciones para el grupo 9
-(41, 9, '2025-02-04', 'pendiente'),
-(42, 9, '2025-02-09', 'progreso'),
-(43, 9, '2025-02-13', 'completada'),
-(1, 9, '2025-02-18', 'cancelada'),
-(2, 9, '2025-02-23', 'pendiente'),
+(41, 9, '2025-02-04 08:00:00', '2025-02-04 10:00:00', 'pendiente'),
+(42, 9, '2025-02-09 09:00:00', '2025-02-09 11:00:00', 'progreso'),
+(43, 9, '2025-02-13 10:00:00', '2025-02-13 12:00:00', 'completada'),
+(1, 9, '2025-02-18 11:00:00', '2025-02-18 13:00:00', 'cancelada'),
+(2, 9, '2025-02-23 12:00:00', '2025-02-23 14:00:00', 'pendiente'),
 
 -- Asignaciones para el grupo 10
-(3, 10, '2025-02-05', 'progreso'),
-(4, 10, '2025-02-10', 'completada'),
-(5, 10, '2025-02-14', 'cancelada'),
-(6, 10, '2025-02-19', 'pendiente'),
-(7, 10, '2025-02-24', 'progreso');
+(3, 10, '2025-02-05 08:00:00', '2025-02-05 10:00:00', 'progreso'),
+(4, 10, '2025-02-10 09:00:00', '2025-02-10 11:00:00', 'completada'),
+(5, 10, '2025-02-14 10:00:00', '2025-02-14 12:00:00', 'cancelada'),
+(6, 10, '2025-02-19 11:00:00', '2025-02-19 13:00:00', 'pendiente'),
+(7, 10, '2025-02-24 12:00:00', '2025-02-24 14:00:00', 'progreso');
+
 
 INSERT INTO `vale_alumno` (`fk_pa_vale`, `fk_alumno_users_vale`, `status`, `observaciones`) VALUES
 (1, 6, 'pendiente', 'Pendiente de aprobación'),
