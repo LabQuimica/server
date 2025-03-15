@@ -36,7 +36,7 @@ app.use('/alerts', alertRouter);
 app.use('/practicas', practicaRouter);
 app.use('/docentes', docenteRouter);
 
-app.use("/api", manualRoutes); 
+app.use("/manuales", manualRoutes); 
 
 // Manejo de errores global
 app.use(errorHandler);
