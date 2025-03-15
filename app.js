@@ -16,6 +16,7 @@ import docenteRouter from './routes/docentesRoutes.js';
 import materialesRouter from './routes/materialesRoutes.js';
 import gruposRouter from './routes/gruposRoutes.js';
 
+import manualRoutes from './routes/manualesRoutes.js';
 
 const corsOptions = {
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
@@ -38,6 +39,8 @@ app.use('/practicas', practicaRouter);
 app.use('/docentes', docenteRouter);
 app.use('/materiales', materialesRouter);
 app.use('/grupos', gruposRouter);
+
+app.use("/manuales", manualRoutes); 
 
 // Manejo de errores global
 app.use(errorHandler);
