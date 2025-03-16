@@ -114,14 +114,17 @@ function valeDetailsObject(rows) {
     id_vale: primeraFila.id_vale,
     nombre_alumno: primeraFila.nombre_alumno,
     email_alumno: primeraFila.email_alumno,
+    boleta: primeraFila.boleta,
     estado_vale: primeraFila.estado_vale,
     observaciones_vale: primeraFila.observaciones_vale,
     fecha_solicitadaVale: primeraFila.fecha_solicitadaVale,
-    fecha_asignadaPA: primeraFila.fecha_asignadaPA,
-    fecha_entregaPA: primeraFila.fecha_entregaPA,
+    fecha_inicio: primeraFila.fecha_inicio,
+    fecha_fin: primeraFila.fecha_fin,
     practica: {
       id_practica: primeraFila.id_practica,
       nombre_practica: primeraFila.nombre_practica,
+      nombre_semestre: primeraFila.nombre_semestre,
+      semestre: primeraFila.semestre,
       nombre_profesor: primeraFila.nombre_profesor,
       materiales: [],
     },
@@ -135,6 +138,7 @@ function valeDetailsObject(rows) {
       tipo_item: fila.tipo_item,
       cantidad_disponible: fila.cantidad_disponible,
       observacion_item: fila.observacion_item,
+      caracteristica: fila.especial,
     });
   });
 
@@ -145,39 +149,46 @@ export async function queryValeAlumnoDetails(id_vale) {
   try {
     const [rows] = await pool.query(
       `
-            SELECT
-                va.id_vale,
-                us.name AS nombre_alumno,
-                us.email AS email_alumno,
-                va.status AS estado_vale,
-                va.observaciones AS observaciones_vale,
-                DATE_FORMAT(va.fecha_solicitada, '%d/%m/%Y %H:%i') AS fecha_solicitadaVale,
-                DATE_FORMAT(pa.fecha_asignada, '%d/%m/%Y %H:%i') AS fecha_asignadaPA,
-                DATE_FORMAT(pa.fecha_entrega, '%d/%m/%Y %H:%i') AS fecha_entregaPA,
-                p.id_practica AS id_practica,
-                p.nombre AS nombre_practica,
-                u.name AS nombre_profesor,
-                pm.cantidad AS cantidad_material,
-                i.nombre AS nombre_item,
-                i.tipo AS tipo_item,
-                i.cantidad AS cantidad_disponible,
-                i.observacion AS observacion_item
-            FROM
-                vale_alumno va
-            JOIN
-                users us ON va.fk_alumno_users_vale = us.id_user
-            JOIN
-                practicas_asignadas pa ON va.fk_pa_vale = pa.id_pa
-            JOIN
-                practicas p ON pa.fk_practicas_pa = p.id_practica
-            JOIN
-                users u ON p.fk_profesor_users_practica = u.id_user
-            JOIN
-                practicas_materiales pm ON p.id_practica = pm.fk_practicas_pm
-            JOIN
-                items i ON pm.fk_items_pm = i.id_item
-            WHERE
-                va.id_vale = ?;`,
+          SELECT
+            va.id_vale,
+            us.name AS nombre_alumno,
+            us.email AS email_alumno,
+            us.codigo AS boleta,
+            va.status AS estado_vale,
+            va.observaciones AS observaciones_vale,
+            DATE_FORMAT(va.fecha_solicitada, '%d/%m/%Y %H:%i') AS fecha_solicitadaVale,
+            DATE_FORMAT(pa.fecha_inicio, '%d/%m/%Y %H:%i') AS fecha_inicio,
+            DATE_FORMAT(pa.fecha_fin, '%d/%m/%Y %H:%i') AS fecha_fin,
+            p.id_practica AS id_practica,
+            p.nombre AS nombre_practica,
+            g.nombre AS nombre_semestre,
+            g.semestre,
+            u.name AS nombre_profesor,
+            pm.cantidad AS cantidad_material,
+            i.nombre AS nombre_item,
+            i.tipo AS tipo_item,
+            i.cantidad AS cantidad_disponible,
+            i.observacion AS observacion_item,
+            i.especial
+        FROM
+            vale_alumno va
+        JOIN
+            users us ON va.fk_alumno_users_vale = us.id_user
+        JOIN
+            practicas_asignadas pa ON va.fk_pa_vale = pa.id_pa
+        JOIN
+            grupo g ON pa.fk_grupo_pa = g.id_grupo
+        JOIN
+            practicas p ON pa.fk_practicas_pa = p.id_practica
+        JOIN
+            users u ON p.fk_profesor_users_practica = u.id_user
+        JOIN
+            practicas_materiales pm ON p.id_practica = pm.fk_practicas_pm
+        JOIN
+            items i ON pm.fk_items_pm = i.id_item
+        WHERE
+            va.id_vale = ?;
+          `,
       [id_vale]
     );
     return valeDetailsObject(rows);
@@ -197,8 +208,8 @@ export async function getValeProfesorStatus(estado) {
                 u.name AS nombre_profesor,
                 g.nombre AS nombre_materia,
                 g.semestre,
-                DATE_FORMAT(pa.fecha_asignada, '%d/%m/%Y %H:%i') AS fecha_asignada,
-                DATE_FORMAT(pa.fecha_entrega, '%d/%m/%Y %H:%i') AS fecha_entrega,
+                DATE_FORMAT(pa.fecha_inicio, '%d/%m/%Y %H:%i') AS fecha_asignada,
+                DATE_FORMAT(pa.fecha_fin, '%d/%m/%Y %H:%i') AS fecha_entrega,
                 p.nombre AS nombre_practica,
                 pa.status AS status_practica
             FROM
@@ -231,11 +242,14 @@ export async function getValeProfesorDetails(id_practica_asignada) {
           p.id_practica as id_practica,
           pa.id_pa AS id_practica_asignada,
           pa.status AS status_practica,
-          DATE_FORMAT(pa.fecha_asignada, '%d/%m/%Y %H:%i') AS fecha_asignada,
-          DATE_FORMAT(pa.fecha_entrega, '%d/%m/%Y %H:%i') AS fecha_entrega,
+          DATE_FORMAT(pa.fecha_inicio, '%d/%m/%Y %H:%i') AS fecha_asignada,
+          DATE_FORMAT(pa.fecha_fin, '%d/%m/%Y %H:%i') AS fecha_entrega,
           g.nombre AS nombre_grupo,
           g.semestre AS semestre_grupo,
           i.id_item,
+          i.num_serie,
+          i.observacion,
+          i.especial,
           i.nombre AS nombre_item,
           i.tipo AS tipo_item,
           i.cantidad AS cantidad_disponible,
@@ -279,6 +293,9 @@ export async function getValeProfesorDetails(id_practica_asignada) {
       items: rows.map((row) => ({
         id_item: row.id_item,
         nombre_item: row.nombre_item,
+        num_serie: row.num_serie,
+        observacion: row.observacion,
+        especial: row.especial,
         tipo_item: row.tipo_item,
         cantidad_disponible: row.cantidad_disponible,
         ubicacion: row.ubicacion,
