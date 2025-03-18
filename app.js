@@ -11,13 +11,10 @@ import docenteRouter from './routes/docentesRoutes.js';
 import materialesRouter from './routes/materialesRoutes.js';
 import gruposRouter from './routes/gruposRoutes.js';
 
-<<<<<<< HEAD
 dotenv.config();
 const port = process.env.PORT || 1234;
 // const port = process.env.PORT || 5000;
-=======
 import manualRoutes from './routes/manualesRoutes.js';
->>>>>>> origin/master
 
 const corsOptions = {
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
