@@ -60,8 +60,8 @@ export async function getSensores() {
     }
 }
 
-// Recuperar los materiales de tipo líquidos
-export async function getLiquidos() {
+// Recuperar los materiales de tipo reactivos
+export async function getReactivos() {
     try {
         const [results] = await pool.query(`
             SELECT 
@@ -78,18 +78,18 @@ export async function getLiquidos() {
                 m.nombre AS marca
             FROM items i
             LEFT JOIN marcas m ON i.fk_marca_item = m.id_marca
-            WHERE i.tipo = 'liquidos'
+            WHERE i.tipo = 'reactivos'
         `);
 
         return results;
     } catch (error) {
-        console.error('Error al ejecutar la consulta para líquidos:', error);
+        console.error('Error al ejecutar la consulta para reactivos:', error);
         throw error;
     }
 }
 
-// Recuperar los materiales de tipo sólidos
-export async function getSolidos() {
+// Recuperar los materiales de tipo materiales
+export async function getMateriales() {
     try {
         const [results] = await pool.query(`
             SELECT 
@@ -106,12 +106,40 @@ export async function getSolidos() {
                 m.nombre AS marca
             FROM items i
             LEFT JOIN marcas m ON i.fk_marca_item = m.id_marca
-            WHERE i.tipo = 'solidos'
+            WHERE i.tipo = 'materiales'
         `);
 
         return results;
     } catch (error) {
-        console.error('Error al ejecutar la consulta para sólidos:', error);
+        console.error('Error al ejecutar la consulta para materiales:', error);
+        throw error;
+    }
+}
+
+// Recuperar los materiales de tipo equipos
+export async function getEquipos() {
+    try {
+        const [results] = await pool.query(`
+            SELECT 
+                i.id_item,
+                i.num_serie,
+                i.nombre,
+                i.tipo,
+                i.ubicacion,
+                i.cantidad,
+                i.observacion,
+                i.status,
+                i.especial,
+                i.fecha_modificacion,
+                m.nombre AS marca
+            FROM items i
+            LEFT JOIN marcas m ON i.fk_marca_item = m.id_marca
+            WHERE i.tipo = 'equipos'
+        `);
+
+        return results;
+    } catch (error) {
+        console.error('Error al ejecutar la consulta para equipos:', error);
         throw error;
     }
 }

@@ -12,4 +12,3 @@ export async function getUsers() {      // Obtener los usuarios
         throw error;
     }
 }
-

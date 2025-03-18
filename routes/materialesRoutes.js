@@ -1,5 +1,5 @@
 import express from 'express';
-import { getKits, getLiquidos, getSensores, getSolidos } from '../querys/materialesQuerys.js';
+import { getKits, getSensores, getReactivos, getMateriales, getEquipos } from '../querys/materialesQuerys.js';
 
 const materialesRouter = express.Router();
 
@@ -27,20 +27,30 @@ materialesRouter.get('/getSensores', async (req, res) => {
     }
 });
 
-materialesRouter.get('/getLiquidos', async (req, res) => {
+materialesRouter.get('/getReactivos', async (req, res) => {
     try {
-        const liquidos = await getLiquidos();
-        res.json(liquidos);
+        const reactivos = await getReactivos();
+        res.json(reactivos);
     } catch (error) {
         console.log(error);
         res.status(500).json({ error: error.message });
     }
 });
 
-materialesRouter.get('/getSolidos', async (req, res) => {
+materialesRouter.get('/getMateriales', async (req, res) => {
     try {
-        const solidos = await getSolidos();
-        res.json(solidos);
+        const materiales = await getMateriales();
+        res.json(materiales);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+materialesRouter.get('/getEquipos', async (req, res) => {
+    try {
+        const materiales = await getEquipos();
+        res.json(materiales);
     } catch (error) {
         console.log(error);
         res.status(500).json({ error: error.message });
