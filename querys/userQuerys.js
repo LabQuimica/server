@@ -18,6 +18,7 @@ export async function getUserById(id) {
     throw error;
   }
 }
+<<<<<<< HEAD
 
 // Función para obtener todos los usuarios (si la necesitás)
 export async function getUsersById() {      
@@ -63,3 +64,5 @@ export async function softDeleteUserQuery(id) {
   const [result] = await pool.query("UPDATE users SET active = 0 WHERE id_user = ?", [id]);
   return result;
 }
+=======
+>>>>>>> origin/master

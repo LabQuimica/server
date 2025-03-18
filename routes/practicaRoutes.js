@@ -1,5 +1,5 @@
 import express from 'express';
-import { crearPractica, deletePractica, getPracticasAsignadas, getPracticasCreadas } from '../querys/practicaQuerys.js';
+import { asignarPractica, crearPractica, deletePractica, getPracticasAsignadas, getPracticasCreadas } from '../querys/practicaQuerys.js';
 
 const practicaRouter = express.Router();
 
@@ -30,14 +30,14 @@ practicaRouter.get('/getPracticasAsignadas', async (req, res) => {
 });
 
 practicaRouter.post('/crearPractica', async (req, res) => {
-    const { nombre, descripcion, num_equipos, creadorId } = req.body;
+    const { nombre, descripcion, num_equipos, creadorId, materiales } = req.body;
     
     if (!nombre || !descripcion || !creadorId || !num_equipos) {
         return res.status(400).json({ error: 'Nombre, descripcion, número de equipos y id de Profesor requeridos' });
     }
   
     try {
-        const newPractica = await crearPractica(nombre, descripcion, num_equipos, creadorId);
+        const newPractica = await crearPractica(nombre, descripcion, num_equipos, creadorId, materiales);
         res.status(201).json({ 
             message: 'Practica creada correctamente', 
             practica: newPractica
@@ -69,6 +69,25 @@ practicaRouter.delete('/deletePractica/:id', async (req, res) => {
         }
         res.status(500).json({ error: 'Error interno del servidor' });
     }
-  });
+});
+
+practicaRouter.post('/asignarPractica', async (req, res) => {
+    const { practica, grupo, fecha_inicio, fecha_fin } = req.body;
+    
+    if (!practica || !grupo || !fecha_inicio || !fecha_fin) {
+        return res.status(400).json({ error: 'Todos los campos requeridos' });
+    }
+  
+    try {
+        const asignedPractica = await asignarPractica(practica, grupo, fecha_inicio, fecha_fin);
+        res.status(201).json({ 
+            message: 'Practica asignada correctamente', 
+            practica: asignedPractica
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: error.message });
+    }
+});
 
 export default practicaRouter;

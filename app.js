@@ -8,10 +8,16 @@ import userRouter from './routes/userRoutes.js';
 import alertRouter from './routes/itemsAlertRoutes.js';
 import practicaRouter from './routes/practicaRoutes.js';
 import docenteRouter from './routes/docentesRoutes.js';
+import materialesRouter from './routes/materialesRoutes.js';
+import gruposRouter from './routes/gruposRoutes.js';
 
+<<<<<<< HEAD
 dotenv.config();
 const port = process.env.PORT || 1234;
 // const port = process.env.PORT || 5000;
+=======
+import manualRoutes from './routes/manualesRoutes.js';
+>>>>>>> origin/master
 
 const corsOptions = {
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
@@ -32,6 +38,10 @@ app.use('/alerts', alertRouter);
 
 app.use('/practicas', practicaRouter);
 app.use('/docentes', docenteRouter);
+app.use('/materiales', materialesRouter);
+app.use('/grupos', gruposRouter);
+
+app.use("/manuales", manualRoutes); 
 
 // Manejo de errores global
 app.use(errorHandler);
