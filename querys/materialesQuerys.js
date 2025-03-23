@@ -143,3 +143,30 @@ export async function getEquipos() {
         throw error;
     }
 }
+
+// Recuperar todos los items
+export async function getItems() {
+    try {
+        const [results] = await pool.query(`
+            SELECT 
+                i.id_item,
+                i.num_serie,
+                i.nombre,
+                i.tipo,
+                i.ubicacion,
+                i.cantidad,
+                i.observacion,
+                i.status,
+                i.especial,
+                i.fecha_modificacion,
+                m.nombre AS marca
+            FROM items i
+            LEFT JOIN marcas m ON i.fk_marca_item = m.id_marca
+        `);
+
+        return results;
+    } catch (error) {
+        console.error('Error al ejecutar la consulta para items', error);
+        throw error;
+    }
+}

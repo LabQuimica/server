@@ -9,6 +9,6 @@ FROM
 WHERE 
     tipo 
 IN
-    ('solidos', 'liquidos');
+    ('reactivos');
 
 `;
