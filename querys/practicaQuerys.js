@@ -47,10 +47,46 @@ export async function getPracticasAsignadas() {
         JOIN practicas p ON pa.fk_practicas_pa = p.id_practica
         JOIN users u ON p.fk_profesor_users_practica = u.id_user
         JOIN grupo g ON pa.fk_grupo_pa = g.id_grupo;
-
       `);
       
       return results;
+  } catch (error) {
+      console.error('Error al ejecutar la consulta:', error);
+      throw error;
+  }
+}
+
+// Recuperar practica por su ID
+export async function getPracticaById(id_practica) {
+  try {
+      const [results] = await pool.query(
+          `
+          SELECT 
+              p.id_practica,
+              p.nombre,
+              p.descripcion,
+              p.fecha_creacion,
+              p.fecha_modificacion,
+              COALESCE(
+                  JSON_ARRAYAGG(
+                      JSON_OBJECT(
+                          'id_item', i.id_item,
+                          'nombre', i.nombre,
+                          'cantidad', pm.cantidad
+                      )
+                  ), 
+                  JSON_ARRAY()
+              ) AS materiales
+          FROM practicas p
+          LEFT JOIN practicas_materiales pm ON p.id_practica = pm.fk_practicas_pm
+          LEFT JOIN items i ON pm.fk_items_pm = i.id_item
+          WHERE p.id_practica = ?
+          GROUP BY p.id_practica
+          `,
+          [id_practica]
+      );
+
+      return results.length > 0 ? results[0] : null;
   } catch (error) {
       console.error('Error al ejecutar la consulta:', error);
       throw error;
@@ -171,4 +207,80 @@ export async function asignarPractica(practica, grupo, fecha_inicio, fehca_fin) 
   );
 
   return results[0];
+}
+
+export async function updatePractica(id_practica, data) {
+  try {
+      const { nombre, descripcion, materiales } = data;
+      const connection = await pool.getConnection();
+      
+      await connection.beginTransaction();
+      if (nombre || descripcion) {
+          await connection.query(
+              `UPDATE practicas 
+               SET nombre = COALESCE(?, nombre), 
+                   descripcion = COALESCE(?, descripcion) 
+               WHERE id_practica = ?`,
+              [nombre, descripcion, id_practica]
+          );
+      }
+
+      if (materiales && Array.isArray(materiales)) {
+          for (const material of materiales) {
+              const { id_item, cantidad } = material;
+              if (id_item && cantidad !== undefined) {
+
+                  const [rows] = await connection.query(
+                    `SELECT * FROM practicas_materiales WHERE fk_practicas_pm = ? AND fk_items_pm = ?`,
+                    [id_practica, id_item]
+                  );
+
+                  if (rows.length > 0) {
+                    await connection.query(
+                      `UPDATE practicas_materiales 
+                       SET cantidad = ? 
+                       WHERE fk_practicas_pm = ? AND fk_items_pm = ?`,
+                      [cantidad, id_practica, id_item]
+                    );
+                  } else {
+                    await connection.query(
+                      `INSERT INTO practicas_materiales (fk_practicas_pm, fk_items_pm, cantidad) VALUES 
+                      (?, ?, ?)`,
+                      [id_practica, id_item, cantidad]
+                    );
+                  }
+              }
+          }
+      }
+
+      await connection.commit();
+      connection.release();
+
+      return { success: true, message: "Práctica actualizada correctamente" };
+  } catch (error) {
+      console.error("Error al actualizar la práctica:", error);
+      if (connection) await connection.rollback();
+      throw error;
+  }
+}
+
+export async function deleteMaterialPractica(id_practica, id_material) {
+  const [practica] = await pool.query(`SELECT * FROM practicas WHERE id_practica = ?`, [id_practica]);
+
+  if (practica.lenght != 0){
+    const [relacion] = await pool.query(
+      `SELECT * FROM practicas_materiales WHERE fk_practicas_pm = ? AND fk_items_pm = ?`, 
+      [id_practica, id_material]
+    );
+
+    if (relacion.length != 0) {
+      const [results] = await pool.query(
+        `DELETE FROM practicas_materiales
+        WHERE fk_practicas_pm = ? AND fk_items_pm = ?;`,
+        [id_practica, id_material]
+      );
+
+      return results[0];
+    }
+  }
 }

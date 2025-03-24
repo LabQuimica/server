@@ -94,7 +94,7 @@ CREATE TABLE `practicas_asignadas`(
     `fecha_inicio` TIMESTAMP NOT NULL,
     `fecha_fin` TIMESTAMP NOT NULL,
     `fecha_asignada` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    `status` ENUM('pendiente', 'progreso', 'completada', 'cancelada') NOT NULL DEFAULT 'pendiente',
+    `status` ENUM('pendiente', 'progreso', 'completada', 'cancelada', 'inhabilitada') NOT NULL DEFAULT 'pendiente',
     `fecha_modificacion` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (`fk_practicas_pa`) REFERENCES `practicas`(`id_practica`),
     FOREIGN KEY (`fk_grupo_pa`) REFERENCES `grupo`(`id_grupo`)
