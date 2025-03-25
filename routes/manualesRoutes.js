@@ -33,8 +33,9 @@ const drive = google.drive({
 // obtener archivos
 manualRoutes.get("/drive-files", async (req, res) => {
   try {
+    const folderId = req.query.folderId || FOLDER_ID;
     const response = await fetch(
-      `https://www.googleapis.com/drive/v3/files?q='${FOLDER_ID}'+in+parents&key=${process.env.DRIVE_API_KEY}&fields=files(id,name,mimeType,webViewLink)`
+      `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents&key=${process.env.DRIVE_API_KEY}&fields=files(id,name,mimeType,webViewLink)`
     );
     const data = await response.json();
     res.json(data.files || []);
@@ -51,38 +52,25 @@ manualRoutes.post("/upload-to-drive", upload.single('file'), async (req, res) =>
       return res.status(400).json({ error: "No se ha enviado ningún archivo" });
     }
 
-    const { originalname, mimetype, buffer } = req.file;
-    
+    const folderId = req.body.folderId || FOLDER_ID;
     const bufferStream = new stream.PassThrough();
-    bufferStream.end(buffer);
-    
-    // metadatos
-    const fileMetadata = {
-      name: originalname,
-      parents: [FOLDER_ID]
-    };
-    
-    const media = {
-      mimeType: mimetype,
-      body: bufferStream
-    };
-    
-    // subir el archivo a Drive
+    bufferStream.end(req.file.buffer);
+
     const response = await drive.files.create({
-      requestBody: fileMetadata,
-      media: media,
-      fields: 'id,name,webViewLink'
+      requestBody: {
+        name: req.file.originalname,
+        mimeType: req.file.mimetype,
+        parents: [folderId]
+      },
+      media: {
+        mimeType: req.file.mimetype,
+        body: bufferStream
+      }
     });
-    
-    res.json({
-      message: "Archivo subido con éxito",
-      fileId: response.data.id,
-      fileName: response.data.name,
-      webViewLink: response.data.webViewLink
-    });
-    
+
+    res.json(response.data);
   } catch (error) {
-    console.error("Error al subir archivo a Google Drive:", error);
+    console.error("Error subiendo archivo a Google Drive:", error);
     res.status(500).json({ error: "Error al subir el archivo" });
   }
 });
