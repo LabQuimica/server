@@ -1,5 +1,5 @@
 import express from 'express';
-import { asignarPractica, crearPractica, deleteMaterialPractica, deletePractica, getPracticaById, getPracticasAsignadas, getPracticasCreadas, updatePractica } from '../querys/practicaQuerys.js';
+import { asignarPractica, crearPractica, deleteMaterialPractica, deletePractica, getPracticaById, getPracticasAsignadas, getPracticasCreadas, updatePractica, updateStatusPractica } from '../querys/practicaQuerys.js';
 
 const practicaRouter = express.Router();
 
@@ -128,6 +128,30 @@ practicaRouter.delete('/deletePracticaMaterial/:practicaId/:materialId', async (
         console.error(error);
         res.status(500).json({ error: error.message });
     }
+});
+
+practicaRouter.post("/updateSatusPractica", async (req, res) => {
+  const data = req.body;
+  try {
+    const responses = [];
+    for (const change of data) {
+      if (change.newStatus) {
+        const response = await updateStatusPractica(
+            change.id_practica,
+            change.newStatus
+          );
+        responses.push(response);
+      }
+    }
+
+    res.status(200).json({
+      message: "Practicas actualizados correctamente",
+      responses,
+    });
+  } catch (error) {
+    console.error("Error al actualizar la practica", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
 });
 
 export default practicaRouter;

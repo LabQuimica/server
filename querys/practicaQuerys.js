@@ -9,8 +9,8 @@ export async function getPracticasCreadas() {
                 u.name as docente,
                 p.nombre,
                 p.descripcion,
-                p.fecha_creacion,
-                p.fecha_modificacion,
+                DATE_FORMAT(p.fecha_creacion, '%d/%m/%Y %H:%i') AS fecha_creacion,
+                DATE_FORMAT(p.fecha_modificacion, '%d/%m/%Y %H:%i') AS fecha_modificacion,
                 CASE WHEN pa.id_pa IS NOT NULL THEN true ELSE false 
                 END as esta_asignada,
                 g.nombre as grupo,
@@ -38,8 +38,8 @@ export async function getPracticasAsignadas() {
           u.name AS docente,
           p.nombre AS nombre,
           p.descripcion AS descripcion,
-          p.fecha_creacion,
-          p.fecha_modificacion,
+          DATE_FORMAT(p.fecha_creacion, '%d/%m/%Y %H:%i') AS fecha_creacion,
+          DATE_FORMAT(p.fecha_modificacion, '%d/%m/%Y %H:%i') AS fecha_modificacion,
           g.nombre AS grupo,
           g.semestre,
           pa.status
@@ -65,8 +65,8 @@ export async function getPracticaById(id_practica) {
               p.id_practica,
               p.nombre,
               p.descripcion,
-              p.fecha_creacion,
-              p.fecha_modificacion,
+              DATE_FORMAT(p.fecha_creacion, '%d/%m/%Y %H:%i') AS fecha_creacion,
+              DATE_FORMAT(p.fecha_modificacion, '%d/%m/%Y %H:%i') AS fecha_modificacion,
               COALESCE(
                   JSON_ARRAYAGG(
                       JSON_OBJECT(
@@ -283,4 +283,20 @@ export async function deleteMaterialPractica(id_practica, id_material) {
       return results[0];
     }
   }
+}
+
+export async function updateStatusPractica(
+  id_practica,
+  newStatus
+) {
+  await pool.query(
+    "UPDATE practicas_asignadas SET status = ? WHERE fk_practicas_pa = ?",
+    [newStatus, id_practica]
+  );
+  return {
+    status: 200,
+    data: {
+      message: `Practica ${id_practica} actualizada con nuevo estado`,
+    },
+  };
 }
