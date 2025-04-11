@@ -15,6 +15,7 @@ CREATE TABLE `users`(
     `rol` ENUM('administrador', 'profesor', 'alumno') NOT NULL DEFAULT 'alumno',
     `active` BOOLEAN NOT NULL DEFAULT '1',
     `codigo` VARCHAR(30),
+    `img` VARCHAR(50) DEFAULT 'default.jpg',
     UNIQUE (`email`)
 ) ENGINE=InnoDB;
 
