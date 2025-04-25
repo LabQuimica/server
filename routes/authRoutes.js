@@ -6,7 +6,6 @@ const authRouter = express.Router();
 
 authRouter.post("/register", async (req, res) => {
   const { email, password, name, rol } = req.body;
-  console.log(email, password, name, rol);
   if (!email || !password || !name) {
     return res.status(400).json({ error: "Missing required fields" });
   }
@@ -24,15 +23,12 @@ authRouter.post("/register", async (req, res) => {
 
 authRouter.post("/login", async (req, res) => {
   const { email, password } = req.body;
-  console.log(email, password);
   if (!email || !password) {
     return res.status(400).json({ error: "Missing required fields" });
   }
 
   try {
     const { token, user } = await postLogin(email, password);
-
-    // Para aplicaciones web, configuramos cookies
     if (
       req.headers["user-agent"] &&
       !req.headers["user-agent"].includes("Expo")
@@ -43,8 +39,6 @@ authRouter.post("/login", async (req, res) => {
         maxAge: 3 * 60 * 60 * 1000, // 3 horas
       });
     }
-
-    // Para todas las aplicaciones (web y móvil), devolvemos token y usuario
     res
       .status(201)
       .json({ message: "Login successfully", token: token, user: user });
