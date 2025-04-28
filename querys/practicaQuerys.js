@@ -7,6 +7,9 @@ export async function getPracticasCreadas() {
             SELECT 
                 p.id_practica,
                 u.name as docente,
+                u.email as docentemail,
+                u.rol as docenterol,
+                u.img as docenteavatar,
                 p.nombre,
                 p.descripcion,
                 DATE_FORMAT(p.fecha_creacion, '%d/%m/%Y %H:%i') AS fecha_creacion,
@@ -20,6 +23,7 @@ export async function getPracticasCreadas() {
             LEFT JOIN users u ON p.fk_profesor_users_practica = u.id_user
             LEFT JOIN practicas_asignadas pa ON p.id_practica = pa.fk_practicas_pa
             LEFT JOIN grupo g ON pa.fk_grupo_pa = g.id_grupo
+            WHERE pa.status != 'inhabilitada';
         `);
         
         return results;
@@ -31,29 +35,30 @@ export async function getPracticasCreadas() {
 
 // Recuperar todas las practicas asignadas
 export async function getPracticasAsignadas() {
-  try {
-      const [results] = await pool.query(`
-        SELECT 
-          p.id_practica,
-          u.name AS docente,
-          p.nombre AS nombre,
-          p.descripcion AS descripcion,
-          DATE_FORMAT(p.fecha_creacion, '%d/%m/%Y %H:%i') AS fecha_creacion,
-          DATE_FORMAT(p.fecha_modificacion, '%d/%m/%Y %H:%i') AS fecha_modificacion,
-          g.nombre AS grupo,
-          g.semestre,
-          pa.status
-        FROM practicas_asignadas pa
-        JOIN practicas p ON pa.fk_practicas_pa = p.id_practica
-        JOIN users u ON p.fk_profesor_users_practica = u.id_user
-        JOIN grupo g ON pa.fk_grupo_pa = g.id_grupo;
-      `);
-      
-      return results;
-  } catch (error) {
-      console.error('Error al ejecutar la consulta:', error);
-      throw error;
-  }
+    try {
+        const [results] = await pool.query(`
+          SELECT 
+            p.id_practica,
+            u.name AS docente,
+            p.nombre AS nombre,
+            p.descripcion AS descripcion,
+            DATE_FORMAT(p.fecha_creacion, '%d/%m/%Y %H:%i') AS fecha_creacion,
+            DATE_FORMAT(p.fecha_modificacion, '%d/%m/%Y %H:%i') AS fecha_modificacion,
+            g.nombre AS grupo,
+            g.semestre,
+            pa.status
+          FROM practicas_asignadas pa
+          JOIN practicas p ON pa.fk_practicas_pa = p.id_practica
+          JOIN users u ON p.fk_profesor_users_practica = u.id_user
+          JOIN grupo g ON pa.fk_grupo_pa = g.id_grupo
+          WHERE pa.status != 'inhabilitada';
+        `);
+        
+        return results;
+    } catch (error) {
+        console.error('Error al ejecutar la consulta:', error);
+        throw error;
+    }
 }
 
 // Recuperar practica por su ID
@@ -299,4 +304,63 @@ export async function updateStatusPractica(
       message: `Practica ${id_practica} actualizada con nuevo estado`,
     },
   };
+}
+
+// Recuperar todas las practicas inhabilitadas
+export async function getPracticasInhabilitadas() {
+  try {
+      const [results] = await pool.query(`
+        SELECT 
+          p.id_practica,
+          u.name AS docente,
+          p.nombre AS nombre,
+          p.descripcion AS descripcion,
+          DATE_FORMAT(p.fecha_creacion, '%d/%m/%Y %H:%i') AS fecha_creacion,
+          DATE_FORMAT(p.fecha_modificacion, '%d/%m/%Y %H:%i') AS fecha_modificacion,
+          g.nombre AS grupo,
+          g.semestre,
+          pa.status
+        FROM practicas_asignadas pa
+        JOIN practicas p ON pa.fk_practicas_pa = p.id_practica
+        JOIN users u ON p.fk_profesor_users_practica = u.id_user
+        JOIN grupo g ON pa.fk_grupo_pa = g.id_grupo
+        WHERE pa.status = 'inhabilitada';
+      `);
+      
+      return results;
+  } catch (error) {
+      console.error('Error al ejecutar la consulta:', error);
+      throw error;
+  }
+}
+
+// Inhabilitar para un grupo en especifico
+export async function inhabilitarPracticaByGroup(id_practica, id_grupo){
+  await pool.query(
+    `UPDATE practicas_asignadas
+     SET status = 'inhabilitada'
+     WHERE fk_practicas_pa = ?
+     AND fk_grupo_pa = ?;
+    `, [id_practica, id_grupo]
+  )
+}
+
+// Inhabilitar para todos los grupos
+export async function inhabilitarPractica(id_practica){
+  await pool.query(
+    `UPDATE practicas_asignadas
+     SET status = 'inhabilitada'
+     WHERE fk_practicas_pa = ?;
+    `, [id_practica]
+  )
+}
+
+// Inhabilitar todas las practicas de un grupo (normalmente cuando acaba el semestre)
+export async function inhabilitarPracticasGroup(id_grupo){
+  await pool.query(
+    `UPDATE practicas_asignadas
+     SET status = 'inhabilitada'
+     WHERE fk_grupo_pa = ?;
+    `, [id_grupo]
+  )
 }

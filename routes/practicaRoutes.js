@@ -1,5 +1,5 @@
 import express from 'express';
-import { asignarPractica, crearPractica, deleteMaterialPractica, deletePractica, getPracticaById, getPracticasAsignadas, getPracticasCreadas, updatePractica, updateStatusPractica } from '../querys/practicaQuerys.js';
+import { asignarPractica, crearPractica, deleteMaterialPractica, deletePractica, getPracticaById, getPracticasAsignadas, getPracticasCreadas, getPracticasInhabilitadas, inhabilitarPractica, inhabilitarPracticaByGroup, inhabilitarPracticasGroup, updatePractica, updateStatusPractica } from '../querys/practicaQuerys.js';
 
 const practicaRouter = express.Router();
 
@@ -152,6 +152,69 @@ practicaRouter.post("/updateSatusPractica", async (req, res) => {
     console.error("Error al actualizar la practica", error);
     res.status(500).json({ error: "Error interno del servidor" });
   }
+});
+
+// Recuperar practicas inhabilitadas
+practicaRouter.get('/getPracticasInhabilitadas', async (req, res) => {
+    try {
+        const practicas = await getPracticasInhabilitadas();
+        
+        res.json(practicas);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Inhabilitar una práctica para un grupo específico
+practicaRouter.post('/inhabilitarPracticaByGroup', async (req, res) => {
+    const { practicaId, groupId } = req.body;
+  
+    if (!practicaId || !groupId) {
+      return res.status(400).json({ error: 'Se requieren el ID de practica y el ID del grupo' });
+    }
+  
+    try {
+      await inhabilitarPracticaByGroup(practicaId, groupId);
+      res.status(200).json({ message: 'Práctica inhabilitada para el grupo especificado.' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Error al inhabilitar la práctica para el grupo.' });
+    }
+});
+  
+// Inhabilitar una práctica para todos los grupos
+practicaRouter.post('/inhabilitarPractica', async (req, res) => {
+    const { practicaId } = req.body;
+  
+    if (!practicaId) {
+      return res.status(400).json({ error: 'Se requiere el ID de practica' });
+    }
+  
+    try {
+      await inhabilitarPractica(practicaId);
+      res.status(200).json({ message: 'Práctica inhabilitada para todos los grupos.' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Error al inhabilitar la práctica.' });
+    }
+});
+  
+// Inhabilitar todas las prácticas de un grupo (por ejemplo, cuando termina el semestre)
+practicaRouter.post('/inhabilitarPracticasGrupo', async (req, res) => {
+    const { groupId } = req.body;
+  
+    if (!groupId ) {
+      return res.status(400).json({ error: 'Se requiere el ID del grupo' });
+    }
+  
+    try {
+      await inhabilitarPracticasGroup(groupId);
+      res.status(200).json({ message: 'Todas las prácticas del grupo han sido inhabilitadas.' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Error al inhabilitar las prácticas del grupo.' });
+    }
 });
 
 export default practicaRouter;
