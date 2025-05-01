@@ -1,5 +1,5 @@
 import express from 'express';
-import { getKits, getSensores, getReactivos, getMateriales, getEquipos, getItems } from '../querys/materialesQuerys.js';
+import { getKits, getSensores, getReactivos, getMateriales, getEquipos, getItems, createMaterialQuery, updateMaterialQuery, deleteMaterialQuery, } from '../querys/materialesQuerys.js';
 
 const materialesRouter = express.Router();
 
@@ -66,5 +66,83 @@ materialesRouter.get('/getItems', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+
+materialesRouter.post('/createMaterial', async (req, res, next) => {
+    try {
+      // Desestructura con valores por defecto
+      const {
+        num_serie = '',        // no permitimos NULL
+        nombre,
+        tipo,
+        ubicacion = null,
+        cantidad,
+        observacion = null,
+        especial = ''
+      } = req.body;
+      // force a boolean 0/1
+      const status = req.body.status != null ? req.body.status : 1;
+  
+      const result = await createMaterialQuery(
+        num_serie,
+        nombre,
+        tipo,
+        ubicacion,
+        cantidad,
+        observacion,
+        status,
+        especial
+      );
+      res.json(result);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  materialesRouter.put('/updateMaterial', async (req, res) => {
+    const {
+      id_item,
+      num_serie,
+      nombre,
+      tipo,
+      ubicacion,
+      cantidad,
+      observacion,
+      status,
+      especial,
+      fk_marca_item, // si es necesario
+    } = req.body;
+  
+    try {
+      const result = await updateMaterialQuery(
+        id_item,
+        num_serie,
+        nombre,
+        tipo,
+        ubicacion,
+        cantidad,
+        observacion,
+        status,
+        especial,
+        fk_marca_item
+      );
+      res.json({ affectedRows: result.affectedRows });
+    } catch (error) {
+      console.error('Error al actualizar el material:', error);
+      res.status(500).json({ error: 'Error al actualizar el material' });
+    }
+  });
+  
+  // DELETE
+  materialesRouter.delete('/deleteMaterial', async (req, res) => {
+    const { id_item } = req.body;
+  
+    try {
+      const result = await deleteMaterialQuery(id_item);
+      res.json({ affectedRows: result.affectedRows });
+    } catch (error) {
+      console.error('Error al eliminar el material:', error);
+      res.status(500).json({ error: 'Error al eliminar el material' });
+    }
+  });
 
 export default materialesRouter;
