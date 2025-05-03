@@ -170,3 +170,48 @@ export async function getItems() {
         throw error;
     }
 }
+
+// Crear un nuevo material
+export async function createMaterialQuery(num_serie, nombre, tipo, ubicacion, cantidad, observacion, status, especial) {
+    try {
+        const [result] = await pool.query(`
+            INSERT INTO items (num_serie, nombre, tipo, ubicacion, cantidad, observacion, status, especial)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        `, [num_serie, nombre, tipo, ubicacion, cantidad, observacion, status, especial]);
+
+        return result;
+    } catch (error) {
+        console.error('Error al crear el material:', error);
+        throw error;
+    }
+}
+
+// Actualizar un material existente
+export async function updateMaterialQuery(id_item, num_serie, nombre, tipo, ubicacion, cantidad, observacion, status, especial) {
+    try {
+        const [result] = await pool.query(`
+            UPDATE items
+            SET num_serie = ?, nombre = ?, tipo = ?, ubicacion = ?, cantidad = ?, observacion = ?, status = ?, especial = ?
+            WHERE id_item = ?
+        `, [num_serie, nombre, tipo, ubicacion, cantidad, observacion, status, especial, id_item]);
+
+        return result;
+    } catch (error) {
+        console.error('Error al actualizar el material:', error);
+        throw error;
+    }
+}
+
+// Eliminar un material
+export async function deleteMaterialQuery(id_item) {
+    try {
+        const [result] = await pool.query(`
+            DELETE FROM items WHERE id_item = ?
+        `, [id_item]);
+
+        return result;
+    } catch (error) {
+        console.error('Error al eliminar el material:', error);
+        throw error;
+    }
+}
