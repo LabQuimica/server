@@ -22,6 +22,37 @@ export async function postRegister(email, password, name, rol = "alumno") {
   return { user };
 }
 
+export async function postRegisterMovil(
+  email,
+  password,
+  name,
+  codigo,
+  img,
+  rol = "alumno"
+) {
+  // Verificar si el usuario ya existe
+  const [existingUser] = await pool.query(
+    "SELECT email FROM users WHERE email =  ?",
+    [email]
+  );
+  if (existingUser.length > 0) {
+    throw new Error("User already exists");
+  }
+
+  // Insertar el nuevo usuario en la base de datos
+  const hashedPassword = await bycrypt.hash(password, 10);
+  const [result] = await pool.query(
+    "INSERT INTO users (email, password, name, rol, codigo, img) VALUES (?, ?, ?, ?, ?, ?)",
+    [email, hashedPassword, name, rol, codigo, img]
+  );
+  if (result.affectedRows === 0) {
+    throw new Error("Error creating user");
+  } else {
+    const { token, user } = await postLogin(email, password);
+    return { token, user };
+  }
+}
+
 export async function postLogin(email, password) {
   // Verificar si el usuario ya existe
   const [existingUser] = await pool.query(
