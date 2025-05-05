@@ -20,21 +20,21 @@ export async function getPracticasCreadasDocente(id_docente){
         const [results] = await pool.query(`
             SELECT 
                 p.id_practica,
-                u.name as docente,
+                u.name AS docente,
                 p.nombre,
                 p.descripcion,
                 DATE_FORMAT(p.fecha_creacion, '%d/%m/%Y %H:%i') AS fecha_creacion,
                 DATE_FORMAT(p.fecha_modificacion, '%d/%m/%Y %H:%i') AS fecha_modificacion,
-                CASE WHEN pa.id_pa IS NOT NULL THEN true ELSE false 
-                END as esta_asignada,
-                g.nombre as grupo,
-                g.semestre,
-                pa.status
+                CASE WHEN COUNT(pa.id_pa) > 0 THEN true ELSE false END AS esta_asignada,
+                GROUP_CONCAT(DISTINCT g.nombre SEPARATOR ', ') AS grupos,
+                GROUP_CONCAT(DISTINCT g.semestre SEPARATOR ', ') AS semestres,
+                GROUP_CONCAT(DISTINCT pa.status SEPARATOR ', ') AS estatuses
             FROM practicas p
             LEFT JOIN users u ON p.fk_profesor_users_practica = u.id_user
-            LEFT JOIN practicas_asignadas pa ON p.id_practica = pa.fk_practicas_pa
+            LEFT JOIN practicas_asignadas pa ON p.id_practica = pa.fk_practicas_pa AND pa.status != 'inhabilitada'
             LEFT JOIN grupo g ON pa.fk_grupo_pa = g.id_grupo
-            WHERE p.fk_profesor_users_practica = ?;
+            WHERE p.fk_profesor_users_practica = ?
+            GROUP BY p.id_practica;
             `,
             [id_docente]
         );
@@ -64,7 +64,8 @@ export async function getPracticasAsignadasDocente(id_docente) {
         JOIN practicas p ON pa.fk_practicas_pa = p.id_practica
         JOIN users u ON p.fk_profesor_users_practica = u.id_user
         JOIN grupo g ON pa.fk_grupo_pa = g.id_grupo
-        WHERE p.fk_profesor_users_practica = ?;
+        WHERE p.fk_profesor_users_practica = ?
+        AND pa.status != 'inhabilitada';
         `,
         [id_docente]
       );

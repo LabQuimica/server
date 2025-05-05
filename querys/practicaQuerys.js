@@ -100,6 +100,7 @@ export async function getPracticaById(id_practica) {
 
 // Crear una practica
 export async function crearPractica(nombre, descripcion, num_equipos, creadorId, materiales) {
+    console.log(creadorId)
     const [creador] = await pool.query(
       `SELECT id_user FROM users WHERE id_user = ? AND rol IN ('profesor', 'administrador')`,
       [creadorId]
