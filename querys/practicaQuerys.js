@@ -21,9 +21,8 @@ export async function getPracticasCreadas() {
                 pa.status
             FROM practicas p
             LEFT JOIN users u ON p.fk_profesor_users_practica = u.id_user
-            LEFT JOIN practicas_asignadas pa ON p.id_practica = pa.fk_practicas_pa
-            LEFT JOIN grupo g ON pa.fk_grupo_pa = g.id_grupo
-            WHERE pa.status != 'inhabilitada';
+            LEFT JOIN practicas_asignadas pa ON p.id_practica = pa.fk_practicas_pa AND pa.status != 'inhabilitada'
+            LEFT JOIN grupo g ON pa.fk_grupo_pa = g.id_grupo;
         `);
         
         return results;
@@ -46,7 +45,8 @@ export async function getPracticasAsignadas() {
             DATE_FORMAT(p.fecha_modificacion, '%d/%m/%Y %H:%i') AS fecha_modificacion,
             g.nombre AS grupo,
             g.semestre,
-            pa.status
+            pa.status,
+            pa.id_pa AS id_unique_practica
           FROM practicas_asignadas pa
           JOIN practicas p ON pa.fk_practicas_pa = p.id_practica
           JOIN users u ON p.fk_profesor_users_practica = u.id_user
@@ -296,7 +296,7 @@ export async function updateStatusPractica(
   newStatus
 ) {
   await pool.query(
-    "UPDATE practicas_asignadas SET status = ? WHERE fk_practicas_pa = ?",
+    "UPDATE practicas_asignadas SET status = ? WHERE id_pa = ?",
     [newStatus, id_practica]
   );
   return {

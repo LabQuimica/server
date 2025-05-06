@@ -59,7 +59,8 @@ export async function getPracticasAsignadasDocente(id_docente) {
           DATE_FORMAT(p.fecha_modificacion, '%d/%m/%Y %H:%i') AS fecha_modificacion,
           g.nombre AS grupo,
           g.semestre,
-          pa.status
+          pa.status,
+          pa.id_pa AS id_unique_practica
         FROM practicas_asignadas pa
         JOIN practicas p ON pa.fk_practicas_pa = p.id_practica
         JOIN users u ON p.fk_profesor_users_practica = u.id_user
