@@ -78,7 +78,7 @@ export async function getReactivos() {
                 m.nombre AS marca
             FROM items i
             LEFT JOIN marcas m ON i.fk_marca_item = m.id_marca
-            WHERE i.tipo = 'reactivos'
+            WHERE i.tipo IN ('reactivos-líquidos', 'reactivos-sólidos')
         `);
 
         return results;
