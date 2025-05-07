@@ -67,39 +67,64 @@ materialesRouter.get('/getItems', async (req, res) => {
     }
 });
 
+// Crear material
 materialesRouter.post('/createMaterial', async (req, res, next) => {
-    try {
-      // Desestructura con valores por defecto
-      const {
-        num_serie = '',        // no permitimos NULL
-        nombre,
-        tipo,
-        ubicacion = null,
-        cantidad,
-        observacion = null,
-        especial = ''
-      } = req.body;
-      // force a boolean 0/1
-      const status = req.body.status != null ? req.body.status : 1;
-  
-      const result = await createMaterialQuery(
-        num_serie,
-        nombre,
-        tipo,
-        ubicacion,
-        cantidad,
-        observacion,
-        status,
-        especial
-      );
-      res.json(result);
-    } catch (error) {
-      next(error);
-    }
-  });
+  try {
+    let {
+      num_serie,
+      nombre,
+      tipo,
+      ubicacion,
+      cantidad,
+      observacion,
+      especial,
+      fk_marca_item,
+      status,
+    } = req.body;
 
-  materialesRouter.put('/updateMaterial', async (req, res) => {
-    const {
+    // defaults
+    num_serie = num_serie?.trim() || 'NA';
+    fk_marca_item = Number(fk_marca_item) || 1;
+    status = status != null ? status : 1;
+
+    const result = await createMaterialQuery(
+      num_serie,
+      nombre,
+      tipo,
+      ubicacion,
+      cantidad,
+      observacion,
+      status,
+      especial,
+      fk_marca_item
+    );
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Actualizar material
+materialesRouter.put('/updateMaterial', async (req, res, next) => {
+  try {
+    let {
+      id_item,
+      num_serie,
+      nombre,
+      tipo,
+      ubicacion,
+      cantidad,
+      observacion,
+      especial,
+      fk_marca_item,
+      status,
+    } = req.body;
+
+    num_serie = num_serie?.trim() || 'NA';
+    fk_marca_item = Number(fk_marca_item) || 1;
+    status = status != null ? status : 1;
+
+    const result = await updateMaterialQuery(
       id_item,
       num_serie,
       nombre,
@@ -109,40 +134,23 @@ materialesRouter.post('/createMaterial', async (req, res, next) => {
       observacion,
       status,
       especial,
-      fk_marca_item, // si es necesario
-    } = req.body;
-  
-    try {
-      const result = await updateMaterialQuery(
-        id_item,
-        num_serie,
-        nombre,
-        tipo,
-        ubicacion,
-        cantidad,
-        observacion,
-        status,
-        especial,
-        fk_marca_item
-      );
-      res.json({ affectedRows: result.affectedRows });
-    } catch (error) {
-      console.error('Error al actualizar el material:', error);
-      res.status(500).json({ error: 'Error al actualizar el material' });
-    }
-  });
-  
-  // DELETE
-  materialesRouter.delete('/deleteMaterial', async (req, res) => {
+      fk_marca_item
+    );
+    res.json({ affectedRows: result.affectedRows });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Eliminar material
+materialesRouter.delete('/deleteMaterial', async (req, res, next) => {
+  try {
     const { id_item } = req.body;
-  
-    try {
-      const result = await deleteMaterialQuery(id_item);
-      res.json({ affectedRows: result.affectedRows });
-    } catch (error) {
-      console.error('Error al eliminar el material:', error);
-      res.status(500).json({ error: 'Error al eliminar el material' });
-    }
-  });
+    const result = await deleteMaterialQuery(id_item);
+    res.json({ affectedRows: result.affectedRows });
+  } catch (error) {
+    next(error);
+  }
+});
 
 export default materialesRouter;
