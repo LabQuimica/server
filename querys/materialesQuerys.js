@@ -60,8 +60,8 @@ export async function getSensores() {
     }
 }
 
-// Recuperar los materiales de tipo reactivos
-export async function getReactivos() {
+// Recuperar los reactivos líquidos
+export async function getReactivosLiquidos() {
     try {
         const [results] = await pool.query(`
             SELECT 
@@ -78,12 +78,40 @@ export async function getReactivos() {
                 m.nombre AS marca
             FROM items i
             LEFT JOIN marcas m ON i.fk_marca_item = m.id_marca
-            WHERE i.tipo IN ('reactivos-líquidos', 'reactivos-sólidos')
+            WHERE i.tipo = 'reactivos-líquidos'
         `);
 
         return results;
     } catch (error) {
-        console.error('Error al ejecutar la consulta para reactivos:', error);
+        console.error('Error al ejecutar la consulta para reactivos líquidos:', error);
+        throw error;
+    }
+}
+
+// Recuperar los reactivos sólidos
+export async function getReactivosSolidos() {
+    try {
+        const [results] = await pool.query(`
+            SELECT 
+                i.id_item,
+                i.num_serie,
+                i.nombre,
+                i.tipo,
+                i.ubicacion,
+                i.cantidad,
+                i.observacion,
+                i.status,
+                i.especial,
+                i.fecha_modificacion,
+                m.nombre AS marca
+            FROM items i
+            LEFT JOIN marcas m ON i.fk_marca_item = m.id_marca
+            WHERE i.tipo = 'reactivos-sólidos'
+        `);
+
+        return results;
+    } catch (error) {
+        console.error('Error al ejecutar la consulta para reactivos sólidos:', error);
         throw error;
     }
 }
