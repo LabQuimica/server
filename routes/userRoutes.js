@@ -54,21 +54,36 @@ userRouter.patch("/softDeleteUser/:id", async (req, res, next) => {
 // Endpoint para actualizar un usuario
 userRouter.patch("/updateUser/:id", async (req, res, next) => {
   const userId = req.params.id;
-  const updatedData = req.body;
+
+  // Extraemos id_user para que no acabe en el SET
+  // y sólo tomamos los campos permitidos
+  const { id_user, ...body } = req.body;
+  const updateFields = {};
+
+  // Campos que dejamos actualizar
+  ["name", "email", "rol", "codigo", "active"].forEach((key) => {
+    if (body[key] !== undefined) {
+      updateFields[key] = body[key];
+    }
+  });
+
   try {
-    const [result] = await pool.query("UPDATE users SET ? WHERE id_user = ?", [
-      updatedData,
-      userId,
-    ]);
+    const [result] = await pool.query(
+      "UPDATE users SET ? WHERE id_user = ?",
+      [updateFields, userId]
+    );
+
     if (result.affectedRows === 0) {
       return res.status(404).json({ error: "Usuario no encontrado" });
     }
+
     const user = await getUserById(userId);
     res.json(user);
   } catch (error) {
     next(error);
   }
 });
+
 
 userRouter.get("/", (req, res) => {
   res.send("GET request to the homepage");

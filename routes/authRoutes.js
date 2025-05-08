@@ -1,6 +1,11 @@
 import express from "express";
 import jwt from "jsonwebtoken";
-import { getUserById, postRegister, postLogin } from "../querys/auth.js";
+import {
+  getUserById,
+  postRegister,
+  postLogin,
+  postRegisterMovil,
+} from "../querys/auth.js";
 
 const authRouter = express.Router();
 
@@ -15,6 +20,32 @@ authRouter.post("/register", async (req, res) => {
     res
       .status(201)
       .json({ message: "User registered successfully", user: newUser });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+authRouter.post("/registerMovil", async (req, res) => {
+  const { email, password, name, codigo, img } = req.body;
+  if (!email || !password || !name || !codigo || !img) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
+  try {
+    const { token, user } = await postRegisterMovil(
+      email,
+      password,
+      name,
+      codigo,
+      img
+    );
+
+    res.status(201).json({
+      message: "User registered successfully",
+      token: token,
+      user: user,
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: error.message });

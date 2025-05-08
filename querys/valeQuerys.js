@@ -311,3 +311,110 @@ export async function getValeProfesorDetails(id_practica_asignada) {
     throw error;
   }
 }
+
+function agruparValesConMateriales(rows) {
+  if (!rows || rows.length === 0) {
+    return [];
+  }
+  const valesMap = new Map();
+
+  rows.forEach((row) => {
+    const valeId = row.id_vale;
+    let valeEntry = valesMap.get(valeId);
+
+    if (!valeEntry) {
+      valeEntry = {
+        id_vale: row.id_vale,
+        nombre_alumno: row.nombre_alumno,
+        email_alumno: row.email_alumno,
+        boleta: row.boleta,
+        estado_vale: row.estado_vale,
+        observaciones_vale: row.observaciones_vale,
+        fecha_solicitadaVale: row.fecha_solicitadaVale,
+        fecha_inicio: row.fecha_inicio,
+        fecha_fin: row.fecha_fin,
+        practica: {
+          id_practica: row.id_practica,
+          nombre_practica: row.nombre_practica,
+          nombre_semestre: row.nombre_semestre,
+          semestre: row.semestre,
+          nombre_profesor: row.nombre_profesor,
+          materiales: [],
+        },
+      };
+      valesMap.set(valeId, valeEntry);
+    }
+
+    // Creamos el objeto material con la información de la fila actual.
+    const material = {
+      nombre_item: row.nombre_item,
+      tipo_item: row.tipo_item,
+      cantidad_solicitada: row.cantidad_material,
+      cantidad_disponible_inventario: row.cantidad_disponible,
+      observacion_item: row.observacion_item,
+      especial: row.especial,
+    };
+
+    // Agregamos el material a la lista de materiales de la práctica del vale correspondiente.
+    if (row.nombre_item) {
+      valeEntry.practica.materiales.push(material);
+    }
+  });
+
+  return Array.from(valesMap.values());
+}
+
+export async function queryGetAllValesAlumno(fk_alumno_users_vale) {
+  try {
+    const [rows] = await pool.query(
+      `
+          SELECT
+            va.id_vale,
+            us.name AS nombre_alumno,
+            us.email AS email_alumno,
+            us.codigo AS boleta,
+            va.status AS estado_vale,
+            va.observaciones AS observaciones_vale,
+            DATE_FORMAT(va.fecha_solicitada, '%d/%m/%Y %H:%i') AS fecha_solicitadaVale,
+            DATE_FORMAT(pa.fecha_inicio, '%d/%m/%Y %H:%i') AS fecha_inicio,
+            DATE_FORMAT(pa.fecha_fin, '%d/%m/%Y %H:%i') AS fecha_fin,
+            p.id_practica AS id_practica,
+            p.nombre AS nombre_practica,
+            g.nombre AS nombre_semestre,
+            g.semestre,
+            u.name AS nombre_profesor,
+            pm.cantidad AS cantidad_material,
+            i.nombre AS nombre_item,
+            i.tipo AS tipo_item,
+            i.cantidad AS cantidad_disponible,
+            i.observacion AS observacion_item,
+            i.especial
+        FROM
+            vale_alumno va
+        JOIN
+            users us ON va.fk_alumno_users_vale = us.id_user
+        JOIN
+            practicas_asignadas pa ON va.fk_pa_vale = pa.id_pa
+        JOIN
+            grupo g ON pa.fk_grupo_pa = g.id_grupo
+        JOIN
+            practicas p ON pa.fk_practicas_pa = p.id_practica
+        JOIN
+            users u ON p.fk_profesor_users_practica = u.id_user
+        JOIN
+            practicas_materiales pm ON p.id_practica = pm.fk_practicas_pm
+        JOIN
+            items i ON pm.fk_items_pm = i.id_item
+        WHERE
+            va.fk_alumno_users_vale = ? AND va.status IN ('pendiente', 'progreso')
+        ORDER BY
+            va.fecha_solicitada DESC, va.id_vale DESC;
+          `,
+      [fk_alumno_users_vale]
+    );
+    return agruparValesConMateriales(rows);
+  } catch (error) {
+    console.error("Error al ejecutar la consulta:", error);
+    throw error;
+  }
+}
