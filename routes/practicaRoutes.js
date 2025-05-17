@@ -1,5 +1,5 @@
 import express from 'express';
-import { asignarPractica, crearPractica, deleteMaterialPractica, deletePractica, getPracticaById, getPracticasAsignadas, getPracticasCreadas, getPracticasInhabilitadas, inhabilitarPractica, inhabilitarPracticaByGroup, inhabilitarPracticasGroup, updatePractica, updateStatusPractica } from '../querys/practicaQuerys.js';
+import { asignarPractica, crearPractica, deleteMaterialPractica, deletePractica, getPracticaById, getPracticasAsignadas, getPracticasByAlumno, getPracticasCreadas, getPracticasInhabilitadas, inhabilitarPractica, inhabilitarPracticaByGroup, inhabilitarPracticasGroup, updatePractica, updateStatusPractica } from '../querys/practicaQuerys.js';
 
 const practicaRouter = express.Router();
 
@@ -214,6 +214,18 @@ practicaRouter.post('/inhabilitarPracticasGrupo', async (req, res) => {
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Error al inhabilitar las prácticas del grupo.' });
+    }
+});
+
+// Recuperar practicas por usuario alumno (para movil)
+practicaRouter.get('/getPracticasByAlumno/:alumno', async (req, res) => {
+    try {
+        const { alumno } = req.params;
+        const practicas = await getPracticasByAlumno(alumno);
+        res.json(practicas);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: error.message });
     }
 });
 
