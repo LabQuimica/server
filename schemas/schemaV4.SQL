@@ -1186,26 +1186,29 @@ UPDATE items
 SET cantidad_maxima = cantidad 
 WHERE cantidad_maxima IS NULL;
 
-DELIMITER //
-
-
+/* 2️⃣  Trigger BEFORE INSERT - inicializa cantidad_maxima */
+DELIMITER $$
 CREATE TRIGGER tr_inicializar_cantidad_maxima
-AFTER INSERT ON items
+BEFORE INSERT ON items
 FOR EACH ROW
 BEGIN
-    IF NEW.cantidad_maxima IS NULL THEN
-        UPDATE items SET cantidad_maxima = NEW.cantidad WHERE id_item = NEW.id_item;
-    END IF;
-END//
+  /*  Si no viene cantidad_maxima, la igualamos a la cantidad ingresada */
+  IF NEW.cantidad_maxima IS NULL THEN
+     SET NEW.cantidad_maxima = NEW.cantidad;
+  END IF;
+END$$
+DELIMITER ;
 
-
+/* 3️⃣  Trigger BEFORE UPDATE - actualiza cuando se reabastece “fuertemente”.*/
+DELIMITER $$
 CREATE TRIGGER tr_actualizar_cantidad_maxima_reabastecimiento
 BEFORE UPDATE ON items
 FOR EACH ROW
 BEGIN
-    IF NEW.cantidad > OLD.cantidad AND (NEW.cantidad - OLD.cantidad) > (OLD.cantidad * 0.5) THEN
+  /*  Solo si la nueva cantidad es > 50 % por encima de la anterior  */
+  IF NEW.cantidad > OLD.cantidad
+     AND NEW.cantidad - OLD.cantidad > OLD.cantidad * 0.5 THEN
         SET NEW.cantidad_maxima = NEW.cantidad;
-    END IF;
-END//
-
+  END IF;
+END$$
 DELIMITER ;

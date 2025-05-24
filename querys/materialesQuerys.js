@@ -78,7 +78,7 @@ export async function getReactivosLiquidos() {
                 m.nombre AS marca
             FROM items i
             LEFT JOIN marcas m ON i.fk_marca_item = m.id_marca
-            WHERE i.tipo = 'reactivos-líquidos'
+            WHERE i.tipo = 'reactivos-liquidos'
         `);
 
         return results;
@@ -106,7 +106,7 @@ export async function getReactivosSolidos() {
                 m.nombre AS marca
             FROM items i
             LEFT JOIN marcas m ON i.fk_marca_item = m.id_marca
-            WHERE i.tipo = 'reactivos-sólidos'
+            WHERE i.tipo = 'reactivos-solidos'
         `);
 
         return results;

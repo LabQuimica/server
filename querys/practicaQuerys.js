@@ -365,3 +365,37 @@ export async function inhabilitarPracticasGroup(id_grupo){
     `, [id_grupo]
   )
 }
+
+// Recuperar practicas por usuario (para movil)
+export async function getPracticasByAlumno(id_user) {
+  try {
+      const [results] = await pool.query(`
+        SELECT 
+          p.id_practica,
+          p.nombre AS practica_nombre,
+          p.descripcion,
+          p.fecha_creacion,
+          p.fecha_modificacion,
+          p.num_equipos,
+          pa.fecha_inicio,
+          pa.fecha_fin,
+          pa.status,
+          g.id_grupo,
+          g.nombre AS grupo_nombre,
+          g.semestre,
+          g.codigo
+        FROM users u
+        JOIN grupo_alumnos ga ON ga.fk_alumno_users_ga = u.id_user
+        JOIN grupo g ON g.id_grupo = ga.fk_grupo_ga
+        JOIN practicas_asignadas pa ON pa.fk_grupo_pa = g.id_grupo
+        JOIN practicas p ON p.id_practica = pa.fk_practicas_pa
+        WHERE u.id_user = ?;
+      `, [id_user]
+      );
+      
+      return results;
+  } catch (error) {
+      console.error('Error al ejecutar la consulta:', error);
+      throw error;
+  }
+}
