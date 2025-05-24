@@ -1179,14 +1179,12 @@ INSERT INTO vale_alumno (fk_pa_vale, fk_alumno_users_vale, status, observaciones
 (3, 8, 'incompleto', 'Requiere corrección en la solicitud'),
 (4, 7, 'incompleto', 'No cumple con los requisitos necesarios');
 
-
 ALTER TABLE items
 ADD COLUMN cantidad_maxima DECIMAL(8, 2) DEFAULT NULL COMMENT 'Capacidad máxima del item';
 
 UPDATE items 
 SET cantidad_maxima = cantidad 
 WHERE cantidad_maxima IS NULL;
-
 
 /* 2️⃣  Trigger BEFORE INSERT - inicializa cantidad_maxima */
 DELIMITER $$
@@ -1201,7 +1199,7 @@ BEGIN
 END$$
 DELIMITER ;
 
-/* 3️⃣  Trigger BEFORE UPDATE - actualiza cuando se reabastece “fuertemente” */
+/* 3️⃣  Trigger BEFORE UPDATE - actualiza cuando se reabastece “fuertemente”.*/
 DELIMITER $$
 CREATE TRIGGER tr_actualizar_cantidad_maxima_reabastecimiento
 BEFORE UPDATE ON items
