@@ -15,6 +15,7 @@ import {
   updatePractica,
   updateStatusPractica,
   inscribemePracticaQuery,
+  updateFechasPracticaAsignadaQuery,
 } from "../querys/practicaQuerys.js";
 
 const practicaRouter = express.Router();
@@ -320,4 +321,54 @@ practicaRouter.post("/inscribemePractica", async (req, res) => {
   }
 });
 
+practicaRouter.post("/updateStatusPracticaAsignada", async (req, res) => {
+  const { id_practica_asignada, newStatus } = req.query;
+
+  if (!id_practica_asignada || !newStatus) {
+    return res.status(400).json({
+      error: "Se requieren el ID de la práctica asignada y el nuevo estado",
+    });
+  }
+  try {
+    const response = await updateStatusPractica(
+      id_practica_asignada,
+      newStatus
+    );
+    res.status(200).json({
+      message: "Practicas actualizados correctamente",
+      response: response,
+    });
+  } catch (error) {
+    console.error("Error al actualizar la practica", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
+
+practicaRouter.post("/updateFechasPracticaAsignada", async (req, res) => {
+  const { id_practica_asignada, fecha_inicio, fecha_fin } = req.body; // Cambiar de req.query a req.body
+
+  if (!id_practica_asignada || !fecha_inicio || !fecha_fin) {
+    return res.status(400).json({
+      error:
+        "Se requieren el ID de la práctica asignada, fecha de inicio y fecha de fin",
+    });
+  }
+
+  try {
+    const result = await updateFechasPracticaAsignadaQuery(
+      id_practica_asignada,
+      fecha_inicio,
+      fecha_fin
+    );
+    res.status(200).json({
+      message: "Fechas de la práctica actualizadas correctamente",
+      data: result,
+    });
+  } catch (error) {
+    console.error("Error al actualizar las fechas de la práctica:", error);
+    res.status(500).json({
+      error: "Error interno del servidor al actualizar las fechas",
+    });
+  }
+});
 export default practicaRouter;

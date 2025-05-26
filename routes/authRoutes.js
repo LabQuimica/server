@@ -88,7 +88,6 @@ authRouter.get("/verifytoken", (req, res) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("Decoded token:", decoded);
     res.json({ user: decoded }); // Devuelve los datos del usuario contenidos en el token
   } catch (error) {
     res.status(400).json({ error: "Invalid token." });
@@ -107,7 +106,6 @@ authRouter.get("/me", async (req, res) => {
   try {
     // Verifica el token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("Decoded token:", decoded);
     // Si en el login generaste el token con { id: ... } usa decoded.id
     const user = await getUserById(decoded.id);
     if (!user) {

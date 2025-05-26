@@ -457,3 +457,38 @@ export async function inscribemePracticaQuery(id_practica_asignada, id_alumno) {
     throw new Error("Error al inscribirse a la práctica: " + error.message);
   }
 }
+
+export async function updateFechasPracticaAsignadaQuery(
+  id_practica_asignada,
+  fecha_inicio,
+  fecha_fin
+) {
+  try {
+    // Validar que las fechas sean válidas
+    const inicioDate = new Date(fecha_inicio);
+    const finDate = new Date(fecha_fin);
+
+    if (isNaN(inicioDate.getTime()) || isNaN(finDate.getTime())) {
+      throw new Error("Las fechas proporcionadas no son válidas");
+    }
+    // Actualizar las fechas
+    const [result] = await pool.query(
+      `UPDATE practicas_asignadas 
+       SET fecha_inicio = ?, fecha_fin = ?
+       WHERE id_pa = ?`,
+      [fecha_inicio, fecha_fin, id_practica_asignada]
+    );
+    if (result.affectedRows === 0) {
+      throw new Error("No se pudo actualizar la práctica asignada");
+    }
+    return {
+      message: "Fechas actualizadas correctamente",
+      updated_rows: result.affectedRows,
+    };
+  } catch (error) {
+    console.error("Error en updateFechasPracticaAsignadaQuery:", error);
+    throw new Error(
+      "Error al actualizar las fechas de la práctica: " + error.message
+    );
+  }
+}
