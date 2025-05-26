@@ -114,6 +114,9 @@ CREATE TABLE `vale_alumno`(
     FOREIGN KEY (`fk_alumno_users_vale`) REFERENCES `users`(`id_user`)
 ) ENGINE=InnoDB;
 
+ALTER TABLE `vale_alumno`
+ADD CONSTRAINT `uk_alumno_practica`
+UNIQUE (`fk_pa_vale`, `fk_alumno_users_vale`);
 
  -- Contrasena de los usuarios: 123456
 INSERT INTO users (name, email, password) VALUES
@@ -1142,33 +1145,10 @@ INSERT INTO vale_alumno (fk_pa_vale, fk_alumno_users_vale, status, observaciones
 (2, 23, 'progreso', 'En revisión detallada'),
 (3, 24, 'completada', 'Material recibido'),
 (4, 25, 'cancelada', 'Cancelado por falta de material'),
-(1, 1, 'pendiente', 'Pendiente de revisión adicional'),
 (2, 3, 'progreso', 'Se requiere validación extra'),
 (3, 2, 'completada', 'Entregado y confirmado'),
 (4, 4, 'cancelada', 'Cancelado por duplicidad'),
-(1, 6, 'pendiente', 'Material no disponible aún'),
-(2, 7, 'progreso', 'Revisión secundaria en curso'),
-(3, 8, 'completada', 'Entrega efectuada correctamente'),
-(4, 9, 'cancelada', 'Cancelación solicitada por el usuario'),
-(1, 10, 'pendiente', 'Faltan documentos para completar'),
-(2, 11, 'progreso', 'Avanzando en la revisión'),
-(3, 12, 'completada', 'Material recibido exitosamente'),
-(4, 13, 'cancelada', 'Anulado por error en solicitud'),
-(1, 14, 'pendiente', 'Esperando confirmación del departamento'),
-(2, 15, 'progreso', 'Revisión avanzada en curso'),
-(3, 16, 'completada', 'Entrega cerrada con éxito'),
-(4, 17, 'cancelada', 'Cancelado por duplicación de solicitud'),
-(1, 18, 'pendiente', 'Validación de material en espera'),
-(2, 19, 'progreso', 'Actualización pendiente por el usuario'),
-(3, 20, 'completada', 'Finalizado y material recibido'),
-(4, 21, 'cancelada', 'Cancelación aprobada por administración'),
-(1, 1, 'pendiente', 'Revisión inicial retrasada'),
-(2, 3, 'progreso', 'En revisión nuevamente'),
-(3, 6, 'completada', 'Entrega adicional completada'),
-(4, 9, 'cancelada', 'Cancelado debido a inactividad'),
 (1, 12, 'pendiente', 'Pendiente de evaluación'),
-(2, 15, 'progreso', 'Avanzando en el proceso'),
-(3, 20, 'completada', 'Cerrado con éxito'),
 (4, 24, 'cancelada', 'Anulación realizada por error administrativo'),
 (1, 5, 'incompleto', 'Falta documentación del alumno'),
 (2, 4, 'incompleto', 'Error en los datos proporcionados'),
@@ -1176,7 +1156,6 @@ INSERT INTO vale_alumno (fk_pa_vale, fk_alumno_users_vale, status, observaciones
 (4, 2, 'incompleto', 'Material no disponible en el almacén'),
 (1, 1, 'incompleto', 'Pendiente de revisión por el profesor'),
 (2, 9, 'incompleto', 'Datos insuficientes para procesar'),
-(3, 8, 'incompleto', 'Requiere corrección en la solicitud'),
 (4, 7, 'incompleto', 'No cumple con los requisitos necesarios');
 
 ALTER TABLE items
