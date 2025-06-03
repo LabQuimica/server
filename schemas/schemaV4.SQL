@@ -1191,3 +1191,141 @@ BEGIN
   END IF;
 END$$
 DELIMITER ;
+
+DELIMITER //
+
+-- Trigger para restar materiales cuando una práctica pasa a "progreso"
+CREATE TRIGGER `actualizar_stock_al_iniciar_practica`
+AFTER UPDATE ON `practicas_asignadas`
+FOR EACH ROW
+BEGIN
+    -- Variables para almacenar datos de la práctica y materiales
+    DECLARE v_id_practica INT;
+    DECLARE v_num_equipos TINYINT;
+    DECLARE v_fk_items_pm INT;
+    DECLARE v_cantidad_pm DECIMAL(8, 2);
+    DECLARE v_contable BOOLEAN;
+    DECLARE v_cantidad_a_restar DECIMAL(8, 2);
+    
+    -- Variable para controlar el final del cursor
+    DECLARE done INT DEFAULT FALSE;
+
+    -- Cursor para iterar sobre los materiales de la práctica
+    DECLARE cur_materiales CURSOR FOR
+        SELECT pm.fk_items_pm, pm.cantidad, pm.contable
+        FROM `practicas_materiales` pm
+        WHERE pm.fk_practicas_pm = v_id_practica;
+
+    -- Handler para el final del cursor
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    -- Solo ejecutar si el status cambia a 'progreso' y no era 'progreso' antes
+    IF NEW.status = 'progreso' AND OLD.status <> 'progreso' THEN
+        SET v_id_practica = NEW.fk_practicas_pa;
+
+        -- Obtener el número de equipos para la práctica
+        SELECT p.num_equipos INTO v_num_equipos
+        FROM `practicas` p
+        WHERE p.id_practica = v_id_practica;
+
+        -- Abrir el cursor
+        OPEN cur_materiales;
+
+        -- Loop para recorrer cada material de la práctica
+        read_loop: LOOP
+            FETCH cur_materiales INTO v_fk_items_pm, v_cantidad_pm, v_contable;
+            IF done THEN
+                LEAVE read_loop;
+            END IF;
+
+            -- Calcular la cantidad a restar
+            IF v_contable = TRUE THEN
+                SET v_cantidad_a_restar = v_cantidad_pm * v_num_equipos;
+            ELSE
+                SET v_cantidad_a_restar = v_cantidad_pm;
+            END IF;
+
+            -- Actualizar la cantidad en la tabla items
+            UPDATE `items`
+            SET `cantidad` = `cantidad` - v_cantidad_a_restar
+            WHERE `id_item` = v_fk_items_pm;
+
+        END LOOP read_loop;
+
+        -- Cerrar el cursor
+        CLOSE cur_materiales;
+    END IF;
+END;
+//
+
+
+-- Trigger para reintegrar materiales (excepto reactivos) cuando una práctica pasa a "completada"
+CREATE TRIGGER `reintegrar_stock_al_completar_practica`
+AFTER UPDATE ON `practicas_asignadas`
+FOR EACH ROW
+BEGIN
+    -- Variables para almacenar datos de la práctica y materiales
+    DECLARE v_id_practica INT;
+    DECLARE v_num_equipos TINYINT;
+    DECLARE v_fk_items_pm INT;
+    DECLARE v_cantidad_pm DECIMAL(8, 2);
+    DECLARE v_contable BOOLEAN;
+    DECLARE v_tipo_item ENUM('kits', 'sensores', 'materiales', 'reactivos-liquidos', 'reactivos-solidos', 'equipos');
+    DECLARE v_cantidad_a_sumar DECIMAL(8, 2);
+
+    -- Variable para controlar el final del cursor
+    DECLARE done INT DEFAULT FALSE;
+
+    -- Cursor para iterar sobre los materiales de la práctica
+    DECLARE cur_materiales_completada CURSOR FOR
+        SELECT pm.fk_items_pm, pm.cantidad, pm.contable, i.tipo
+        FROM `practicas_materiales` pm
+        JOIN `items` i ON pm.fk_items_pm = i.id_item
+        WHERE pm.fk_practicas_pm = v_id_practica;
+    
+    -- Handler para el final del cursor
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    -- Solo ejecutar si el status cambia a 'completada' y no era 'completada' antes
+    IF NEW.status = 'completada' AND OLD.status <> 'completada' THEN
+        SET v_id_practica = NEW.fk_practicas_pa;
+
+        -- Obtener el número de equipos para la práctica
+        SELECT p.num_equipos INTO v_num_equipos
+        FROM `practicas` p
+        WHERE p.id_practica = v_id_practica;
+
+        -- Abrir el cursor
+        OPEN cur_materiales_completada;
+
+        -- Loop para recorrer cada material de la práctica
+        read_loop_completada: LOOP
+            FETCH cur_materiales_completada INTO v_fk_items_pm, v_cantidad_pm, v_contable, v_tipo_item;
+            IF done THEN
+                LEAVE read_loop_completada;
+            END IF;
+
+            -- Solo sumar si el tipo de item NO es reactivo líquido o sólido
+            IF v_tipo_item <> 'reactivos-liquidos' AND v_tipo_item <> 'reactivos-solidos' THEN
+                -- Calcular la cantidad a sumar
+                IF v_contable = TRUE THEN
+                    SET v_cantidad_a_sumar = v_cantidad_pm * v_num_equipos;
+                ELSE
+                    SET v_cantidad_a_sumar = v_cantidad_pm;
+                END IF;
+
+                -- Actualizar la cantidad en la tabla items
+                UPDATE `items`
+                SET `cantidad` = `cantidad` + v_cantidad_a_sumar
+                WHERE `id_item` = v_fk_items_pm;
+            END IF;
+        END LOOP read_loop_completada;
+
+        -- Cerrar el cursor
+        CLOSE cur_materiales_completada;
+    END IF;
+END;
+//
+
+-- Volvemos al delimitador estándar
+DELIMITER ;
