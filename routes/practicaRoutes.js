@@ -1,7 +1,4 @@
 import express from 'express';
-import { asignarPractica, crearPractica, deleteMaterialPractica, deletePractica, getNewPracticasAsignadas, getPracticaById, getPracticasAsignadas, getPracticasByAlumno, getPracticasByGroup, getPracticasCreadas, getPracticasInhabilitadas, inhabilitarPractica, inhabilitarPracticaByGroup, inhabilitarPracticasGroup, updatePractica, updateStatusPractica } from '../querys/practicaQuerys.js';
-
-import express from "express";
 import {
   asignarPractica,
   crearPractica,

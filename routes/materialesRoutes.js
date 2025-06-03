@@ -1,10 +1,9 @@
 import express from 'express';
-import { getKits, getSensores, getReactivos, getMateriales, getEquipos, getItems, createMaterialQuery, updateMaterialQuery, deleteMaterialQuery, getReactivosLiquidos, getReactivosSolidos, } from '../querys/materialesQuerys.js';
 
-import express from "express";
 import {
   getKits,
   getSensores,
+  getReactivos,
   getReactivosLiquidos,
   getReactivosSolidos,
   getMateriales,
@@ -81,6 +80,7 @@ materialesRouter.get('/getMateriales', async (req, res) => {
         console.log(error);
         res.status(500).json({ error: error.message });
     }
+});
 
 materialesRouter.get("/getSensores", async (req, res) => {
   try {
