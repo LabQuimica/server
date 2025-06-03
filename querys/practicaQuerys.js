@@ -128,14 +128,15 @@ export async function crearPractica(
 
   // Agregar materiales de practica
   if (materiales && materiales.length > 0) {
-    const valores = materiales.map(({ itemId, cantidad }) => [
+    const valores = materiales.map(({ itemId, cantidad, contable }) => [
       practicaId,
       itemId,
       cantidad,
+      contable,
     ]);
 
     await pool.query(
-      `INSERT INTO practicas_materiales (fk_practicas_pm, fk_items_pm, cantidad) VALUES ?`,
+      `INSERT INTO practicas_materiales (fk_practicas_pm, fk_items_pm, cantidad, contable) VALUES ?`,
       [valores]
     );
   }
