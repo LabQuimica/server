@@ -1,5 +1,5 @@
 import express from 'express';
-import { getKits, getSensores, getReactivosLiquidos, getReactivosSolidos, getMateriales, getEquipos, getItems, createMaterialQuery, updateMaterialQuery, deleteMaterialQuery, } from '../querys/materialesQuerys.js';
+import { getKits, getSensores, getReactivos, getMateriales, getEquipos, getItems, createMaterialQuery, updateMaterialQuery, deleteMaterialQuery, getReactivosLiquidos, getReactivosSolidos, } from '../querys/materialesQuerys.js';
 
 const materialesRouter = express.Router();
 
@@ -27,10 +27,20 @@ materialesRouter.get('/getSensores', async (req, res) => {
     }
 });
 
+materialesRouter.get('/getReactivos', async (req, res) => {
+    try {
+        const reactivos = await getReactivos();
+        res.json(reactivos);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
 materialesRouter.get('/getReactivosLiquidos', async (req, res) => {
     try {
-        const reactivosLiquidos = await getReactivosLiquidos();
-        res.json(reactivosLiquidos);
+        const reactivos = await getReactivosLiquidos();
+        res.json(reactivos);
     } catch (error) {
         console.log(error);
         res.status(500).json({ error: error.message });
@@ -39,13 +49,14 @@ materialesRouter.get('/getReactivosLiquidos', async (req, res) => {
 
 materialesRouter.get('/getReactivosSolidos', async (req, res) => {
     try {
-        const reactivosSolidos = await getReactivosSolidos();
-        res.json(reactivosSolidos);
+        const reactivos = await getReactivosSolidos();
+        res.json(reactivos);
     } catch (error) {
         console.log(error);
         res.status(500).json({ error: error.message });
     }
 });
+
 
 materialesRouter.get('/getMateriales', async (req, res) => {
     try {

@@ -1,5 +1,5 @@
 import express from 'express';
-import { asignarPractica, crearPractica, deleteMaterialPractica, deletePractica, getPracticaById, getPracticasAsignadas, getPracticasByAlumno, getPracticasCreadas, getPracticasInhabilitadas, inhabilitarPractica, inhabilitarPracticaByGroup, inhabilitarPracticasGroup, updatePractica, updateStatusPractica } from '../querys/practicaQuerys.js';
+import { asignarPractica, crearPractica, deleteMaterialPractica, deletePractica, getNewPracticasAsignadas, getPracticaById, getPracticasAsignadas, getPracticasByAlumno, getPracticasByGroup, getPracticasCreadas, getPracticasInhabilitadas, inhabilitarPractica, inhabilitarPracticaByGroup, inhabilitarPracticasGroup, updatePractica, updateStatusPractica } from '../querys/practicaQuerys.js';
 
 const practicaRouter = express.Router();
 
@@ -222,6 +222,30 @@ practicaRouter.get('/getPracticasByAlumno/:alumno', async (req, res) => {
     try {
         const { alumno } = req.params;
         const practicas = await getPracticasByAlumno(alumno);
+        res.json(practicas);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Recuperar practicas por grupo (para movil)
+practicaRouter.get('/getPracticasByGroup/:grupo', async (req, res) => {
+    try {
+        const { grupo } = req.params;
+        const practicas = await getPracticasByGroup(grupo);
+        res.json(practicas);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Recuperar practicas nuevas por usuario alumno (para movil --> notificaciones)
+practicaRouter.get('/getNewPracticasAsignadas/:alumno', async (req, res) => {
+    try {
+        const { alumno } = req.params;
+        const practicas = await getNewPracticasAsignadas(alumno);
         res.json(practicas);
     } catch (error) {
         console.log(error);

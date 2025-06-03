@@ -65,3 +65,27 @@ export async function addGrupoCode(id_grupo, codigo) {
       throw error;
     }
 }  
+
+export async function getGruposByAlumno(id_alumno){
+    try {
+        const [results] = await pool.query(`
+            SELECT 
+                g.id_grupo,
+                g.nombre,
+                g.semestre,
+                g.codigo
+            FROM 
+                grupo g
+            JOIN 
+                grupo_alumnos ga ON g.id_grupo = ga.fk_grupo_ga
+            WHERE 
+                ga.fk_alumno_users_ga = ?;
+        `,[id_alumno]
+        );
+
+        return results;
+    } catch (error) {
+        console.error('Error al ejecutar la consulta:', error);
+        throw error;
+    }
+}
