@@ -87,6 +87,7 @@ CREATE TABLE `practicas_materiales`(
     `contable` BOOLEAN NOT NULL DEFAULT '1',
     FOREIGN KEY (`fk_practicas_pm`) REFERENCES `practicas`(`id_practica`),
     FOREIGN KEY (`fk_items_pm`) REFERENCES `items`(`id_item`)
+        ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE `practicas_asignadas`(
@@ -626,8 +627,7 @@ INSERT INTO items (fk_marca_item, num_serie, nombre, tipo, ubicacion, cantidad, 
 (1, 'YDGK', 'Sulfato de cobre pentahidratado CuSO4.5H2O', 'reactivos-solidos', 'Estante cerrado 2, Nivel 6', 3000, 1, 'Caducidad 2024-Febrero'),
 (1, 'HAXH', 'Sulfato de sodio anhidro Na2SO4', 'reactivos-solidos', 'Estante cerrado 1, Nivel 4', 250, 1, 'Caducidad 2023-Junio'),
 (1, 'C653', 'Sulfato de sodio decahidratado Na2SO4-10H2O', 'reactivos-solidos', 'Estante cerrado 1, Nivel 4', 3000, 1, 'Caducidad 2022-Octubre'),
-(1, '492J', 'Sulfato de zinc heptahidratado ZnSO4-7H2O', 'reactivos-solidos', 'Estante cerrado 2 , Nivel 6', 500, 1, 'Caducidad 2024-Febrero'),
-(1, '53ZF', 'Sulfato ferroso heptahidratado FeSO4-7H2O', 'reactivos-solidos', 'Estante cerrado 1, Nivel 4', 3000, 1, 'Caducidad 2022-Noviembre'),
+(1, '492J', 'Sulfato ferroso heptahidratado FeSO4-7H2O', 'reactivos-solidos', 'Estante cerrado 1, Nivel 4', 3000, 1, 'Caducidad 2022-Noviembre'),
 (1, 'ATBP', 'Tartrato de sodio y potasio C4H4Kn3O6*4H2O', 'reactivos-solidos', 'Estante cerrado 1, Nivel 5', 500, 1, 'Caducidad 2024-Marzo'),
 (1, 'AKBZ', 'Tiocianato de potasio KSCN', 'reactivos-solidos', 'Estante cerrado 1, Nivel 3', 500, 1, 'Caducidad 2023-Septiembre'),
 (1, 'XXQ6', 'Tiosulfato de sodio pentahidratado Na2O3S2-5H2O', 'reactivos-solidos', 'Estante cerrado 1, Nivel 4', 3000, 1, 'Caducidad 2024-Marzo'),

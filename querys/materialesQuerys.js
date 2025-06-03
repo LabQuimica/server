@@ -256,14 +256,20 @@ export async function updateMaterialQuery(id_item, num_serie, nombre, tipo, ubic
 
 // Eliminar un material
 export async function deleteMaterialQuery(id_item) {
+    const conn = await pool.getConnection();
     try {
-        const [result] = await pool.query(`
-            DELETE FROM items WHERE id_item = ?
-        `, [id_item]);
-
-        return result;
-    } catch (error) {
-        console.error('Error al eliminar el material:', error);
-        throw error;
+        // Elimina primero las referencias en practicas_materiales
+        await conn.query(
+            "DELETE FROM practicas_materiales WHERE fk_items_pm = ?",
+            [id_item]
+        );
+        // Ahora elimina el material y retorna el resultado
+        const [result] = await conn.query(
+            "DELETE FROM items WHERE id_item = ?",
+            [id_item]
+        );
+        return result; // <--- Esto es importante
+    } finally {
+        conn.release();
     }
 }
