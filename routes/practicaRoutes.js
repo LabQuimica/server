@@ -1,3 +1,6 @@
+import express from 'express';
+import { asignarPractica, crearPractica, deleteMaterialPractica, deletePractica, getNewPracticasAsignadas, getPracticaById, getPracticasAsignadas, getPracticasByAlumno, getPracticasByGroup, getPracticasCreadas, getPracticasInhabilitadas, inhabilitarPractica, inhabilitarPracticaByGroup, inhabilitarPracticasGroup, updatePractica, updateStatusPractica } from '../querys/practicaQuerys.js';
+
 import express from "express";
 import {
   asignarPractica,
@@ -319,6 +322,30 @@ practicaRouter.post("/inscribemePractica", async (req, res) => {
       error: "Error interno del servidor al procesar la inscripción",
     });
   }
+});
+
+// Recuperar practicas por grupo (para movil)
+practicaRouter.get('/getPracticasByGroup/:grupo', async (req, res) => {
+    try {
+        const { grupo } = req.params;
+        const practicas = await getPracticasByGroup(grupo);
+        res.json(practicas);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Recuperar practicas nuevas por usuario alumno (para movil --> notificaciones)
+practicaRouter.get('/getNewPracticasAsignadas/:alumno', async (req, res) => {
+    try {
+        const { alumno } = req.params;
+        const practicas = await getNewPracticasAsignadas(alumno);
+        res.json(practicas);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: error.message });
+    }
 });
 
 practicaRouter.post("/updateStatusPracticaAsignada", async (req, res) => {

@@ -397,7 +397,7 @@ export async function getPracticasByAlumno(id_user) {
       `
         SELECT 
           p.id_practica,
-          p.nombre AS practica_nombre,
+          p.nombre,
           p.descripcion,
           p.fecha_creacion,
           p.fecha_modificacion,
@@ -424,6 +424,79 @@ export async function getPracticasByAlumno(id_user) {
     console.error("Error al ejecutar la consulta:", error);
     throw error;
   }
+}
+
+// Recuperar practicas por grupo (para movil)
+export async function getPracticasByGroup(id_grupo) {
+  try {
+      const [results] = await pool.query(`
+        SELECT 
+            pa.id_pa,
+            p.id_practica,
+            p.nombre,
+            p.descripcion,
+            p.num_equipos,
+            p.fecha_creacion,
+            pa.fecha_inicio,
+            pa.fecha_fin,
+            pa.status,
+            pa.fecha_asignada,
+            g.nombre AS grupo_nombre,
+            g.semestre,
+            g.codigo,
+            u.name AS nombre_profesor
+        FROM 
+            practicas_asignadas pa
+        JOIN 
+            practicas p ON pa.fk_practicas_pa = p.id_practica
+        JOIN 
+            grupo g ON pa.fk_grupo_pa = g.id_grupo
+        JOIN 
+            users u ON p.fk_profesor_users_practica = u.id_user
+        WHERE 
+            pa.fk_grupo_pa = ?;
+      `, [id_grupo]
+      );
+      
+      return results;
+  } catch (error) {
+      console.error('Error al ejecutar la consulta:', error);
+      throw error;
+  }
+}
+
+// Recuperar todas las practicas asignadas en el ultimo mes (para movil --> notificaciones)
+export async function getNewPracticasAsignadas(id_user) {
+    try {
+        const [results] = await pool.query(`
+          SELECT 
+            p.id_practica,
+            p.nombre,
+            p.descripcion,
+            p.fecha_creacion,
+            p.fecha_modificacion,
+            p.num_equipos,
+            pa.fecha_inicio,
+            pa.fecha_fin,
+            pa.status,
+            g.id_grupo,
+            g.nombre AS grupo_nombre,
+            g.semestre,
+            g.codigo
+          FROM practicas_asignadas pa
+          JOIN grupo_alumnos ga ON pa.fk_grupo_pa = ga.fk_grupo_ga
+          JOIN practicas p ON pa.fk_practicas_pa = p.id_practica
+          JOIN grupo g ON pa.fk_grupo_pa = g.id_grupo
+          WHERE ga.fk_alumno_users_ga = ?
+            AND pa.fecha_asignada >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH);
+        `, [id_user]
+      );
+        
+        return results;
+    } catch (error) {
+        console.error('Error al ejecutar la consulta:', error);
+        throw error;
+    }
 }
 
 export async function inscribemePracticaQuery(id_practica_asignada, id_alumno) {

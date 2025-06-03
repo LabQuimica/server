@@ -1,3 +1,6 @@
+import express from 'express';
+import { getKits, getSensores, getReactivos, getMateriales, getEquipos, getItems, createMaterialQuery, updateMaterialQuery, deleteMaterialQuery, getReactivosLiquidos, getReactivosSolidos, } from '../querys/materialesQuerys.js';
+
 import express from "express";
 import {
   getKits,
@@ -38,6 +41,46 @@ materialesRouter.get("/getReactivos", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+materialesRouter.get('/getReactivos', async (req, res) => {
+    try {
+        const reactivos = await getReactivos();
+        res.json(reactivos);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+materialesRouter.get('/getReactivosLiquidos', async (req, res) => {
+    try {
+        const reactivos = await getReactivosLiquidos();
+        res.json(reactivos);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+materialesRouter.get('/getReactivosSolidos', async (req, res) => {
+    try {
+        const reactivos = await getReactivosSolidos();
+        res.json(reactivos);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
+materialesRouter.get('/getMateriales', async (req, res) => {
+    try {
+        const materiales = await getMateriales();
+        res.json(materiales);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: error.message });
+    }
 
 materialesRouter.get("/getSensores", async (req, res) => {
   try {
