@@ -1,30 +1,45 @@
 import express from 'express';
 import { getKits, getSensores, getReactivos, getMateriales, getEquipos, getItems, createMaterialQuery, updateMaterialQuery, deleteMaterialQuery, getReactivosLiquidos, getReactivosSolidos, } from '../querys/materialesQuerys.js';
 
+import express from "express";
+import {
+  getKits,
+  getSensores,
+  getReactivosLiquidos,
+  getReactivosSolidos,
+  getMateriales,
+  getEquipos,
+  getItems,
+  createMaterialQuery,
+  updateMaterialQuery,
+  deleteMaterialQuery,
+  getReactivosQuery,
+} from "../querys/materialesQuerys.js";
+
 const materialesRouter = express.Router();
 
-materialesRouter.get('/', (req, res) => {
-    res.send('GET request to the homepage');
+materialesRouter.get("/", (req, res) => {
+  res.send("GET request to the homepage");
 });
 
-materialesRouter.get('/getKits', async (req, res) => {
-    try {
-        const kits = await getKits();
-        res.json(kits);
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ error: error.message });
-    }
+materialesRouter.get("/getKits", async (req, res) => {
+  try {
+    const kits = await getKits();
+    res.json(kits);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error.message });
+  }
 });
 
-materialesRouter.get('/getSensores', async (req, res) => {
-    try {
-        const sensores = await getSensores();
-        res.json(sensores);
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ error: error.message });
-    }
+materialesRouter.get("/getReactivos", async (req, res) => {
+  try {
+    const reactivos = await getReactivosQuery();
+    res.json(reactivos);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error.message });
+  }
 });
 
 materialesRouter.get('/getReactivos', async (req, res) => {
@@ -66,30 +81,69 @@ materialesRouter.get('/getMateriales', async (req, res) => {
         console.log(error);
         res.status(500).json({ error: error.message });
     }
+
+materialesRouter.get("/getSensores", async (req, res) => {
+  try {
+    const sensores = await getSensores();
+    res.json(sensores);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error.message });
+  }
 });
 
-materialesRouter.get('/getEquipos', async (req, res) => {
-    try {
-        const materiales = await getEquipos();
-        res.json(materiales);
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ error: error.message });
-    }
+materialesRouter.get("/getReactivosLiquidos", async (req, res) => {
+  try {
+    const reactivosLiquidos = await getReactivosLiquidos();
+    res.json(reactivosLiquidos);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error.message });
+  }
 });
 
-materialesRouter.get('/getItems', async (req, res) => {
-    try {
-        const items = await getItems();
-        res.json(items);
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ error: error.message });
-    }
+materialesRouter.get("/getReactivosSolidos", async (req, res) => {
+  try {
+    const reactivosSolidos = await getReactivosSolidos();
+    res.json(reactivosSolidos);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+materialesRouter.get("/getMateriales", async (req, res) => {
+  try {
+    const materiales = await getMateriales();
+    res.json(materiales);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+materialesRouter.get("/getEquipos", async (req, res) => {
+  try {
+    const materiales = await getEquipos();
+    res.json(materiales);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+materialesRouter.get("/getItems", async (req, res) => {
+  try {
+    const items = await getItems();
+    res.json(items);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // Crear material
-materialesRouter.post('/createMaterial', async (req, res, next) => {
+materialesRouter.post("/createMaterial", async (req, res, next) => {
   try {
     let {
       num_serie,
@@ -104,7 +158,7 @@ materialesRouter.post('/createMaterial', async (req, res, next) => {
     } = req.body;
 
     // defaults
-    num_serie = num_serie?.trim() || 'NA';
+    num_serie = num_serie?.trim() || "NA";
     fk_marca_item = Number(fk_marca_item) || 1;
     status = status != null ? status : 1;
 
@@ -126,7 +180,7 @@ materialesRouter.post('/createMaterial', async (req, res, next) => {
 });
 
 // Actualizar material
-materialesRouter.put('/updateMaterial', async (req, res, next) => {
+materialesRouter.put("/updateMaterial", async (req, res, next) => {
   try {
     let {
       id_item,
@@ -141,7 +195,7 @@ materialesRouter.put('/updateMaterial', async (req, res, next) => {
       status,
     } = req.body;
 
-    num_serie = num_serie?.trim() || 'NA';
+    num_serie = num_serie?.trim() || "NA";
     fk_marca_item = Number(fk_marca_item) || 1;
     status = status != null ? status : 1;
 
@@ -164,13 +218,17 @@ materialesRouter.put('/updateMaterial', async (req, res, next) => {
 });
 
 // Eliminar material
-materialesRouter.delete('/deleteMaterial', async (req, res, next) => {
+materialesRouter.delete("/deleteMaterial", async (req, res, next) => {
   try {
     const { id_item } = req.body;
     const result = await deleteMaterialQuery(id_item);
-    res.json({ affectedRows: result.affectedRows });
-  } catch (error) {
-    next(error);
+    if (result.affectedRows > 0) {
+      res.status(200).json({ message: "Material eliminado" });
+    } else {
+      res.status(404).json({ message: "Material no encontrado" });
+    }
+  } catch (err) {
+    res.status(500).json({ message: "Error al eliminar el material", error: err.message });
   }
 });
 

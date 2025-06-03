@@ -87,6 +87,7 @@ CREATE TABLE `practicas_materiales`(
     `contable` BOOLEAN NOT NULL DEFAULT '1',
     FOREIGN KEY (`fk_practicas_pm`) REFERENCES `practicas`(`id_practica`),
     FOREIGN KEY (`fk_items_pm`) REFERENCES `items`(`id_item`)
+        ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE `practicas_asignadas`(
@@ -114,6 +115,9 @@ CREATE TABLE `vale_alumno`(
     FOREIGN KEY (`fk_alumno_users_vale`) REFERENCES `users`(`id_user`)
 ) ENGINE=InnoDB;
 
+ALTER TABLE `vale_alumno`
+ADD CONSTRAINT `uk_alumno_practica`
+UNIQUE (`fk_pa_vale`, `fk_alumno_users_vale`);
 
  -- Contrasena de los usuarios: 123456
 INSERT INTO users (name, email, password) VALUES
@@ -623,8 +627,7 @@ INSERT INTO items (fk_marca_item, num_serie, nombre, tipo, ubicacion, cantidad, 
 (1, 'YDGK', 'Sulfato de cobre pentahidratado CuSO4.5H2O', 'reactivos-solidos', 'Estante cerrado 2, Nivel 6', 3000, 1, 'Caducidad 2024-Febrero'),
 (1, 'HAXH', 'Sulfato de sodio anhidro Na2SO4', 'reactivos-solidos', 'Estante cerrado 1, Nivel 4', 250, 1, 'Caducidad 2023-Junio'),
 (1, 'C653', 'Sulfato de sodio decahidratado Na2SO4-10H2O', 'reactivos-solidos', 'Estante cerrado 1, Nivel 4', 3000, 1, 'Caducidad 2022-Octubre'),
-(1, '492J', 'Sulfato de zinc heptahidratado ZnSO4-7H2O', 'reactivos-solidos', 'Estante cerrado 2 , Nivel 6', 500, 1, 'Caducidad 2024-Febrero'),
-(1, '53ZF', 'Sulfato ferroso heptahidratado FeSO4-7H2O', 'reactivos-solidos', 'Estante cerrado 1, Nivel 4', 3000, 1, 'Caducidad 2022-Noviembre'),
+(1, '492J', 'Sulfato ferroso heptahidratado FeSO4-7H2O', 'reactivos-solidos', 'Estante cerrado 1, Nivel 4', 3000, 1, 'Caducidad 2022-Noviembre'),
 (1, 'ATBP', 'Tartrato de sodio y potasio C4H4Kn3O6*4H2O', 'reactivos-solidos', 'Estante cerrado 1, Nivel 5', 500, 1, 'Caducidad 2024-Marzo'),
 (1, 'AKBZ', 'Tiocianato de potasio KSCN', 'reactivos-solidos', 'Estante cerrado 1, Nivel 3', 500, 1, 'Caducidad 2023-Septiembre'),
 (1, 'XXQ6', 'Tiosulfato de sodio pentahidratado Na2O3S2-5H2O', 'reactivos-solidos', 'Estante cerrado 1, Nivel 4', 3000, 1, 'Caducidad 2024-Marzo'),
@@ -1142,33 +1145,10 @@ INSERT INTO vale_alumno (fk_pa_vale, fk_alumno_users_vale, status, observaciones
 (2, 23, 'progreso', 'En revisión detallada'),
 (3, 24, 'completada', 'Material recibido'),
 (4, 25, 'cancelada', 'Cancelado por falta de material'),
-(1, 1, 'pendiente', 'Pendiente de revisión adicional'),
 (2, 3, 'progreso', 'Se requiere validación extra'),
 (3, 2, 'completada', 'Entregado y confirmado'),
 (4, 4, 'cancelada', 'Cancelado por duplicidad'),
-(1, 6, 'pendiente', 'Material no disponible aún'),
-(2, 7, 'progreso', 'Revisión secundaria en curso'),
-(3, 8, 'completada', 'Entrega efectuada correctamente'),
-(4, 9, 'cancelada', 'Cancelación solicitada por el usuario'),
-(1, 10, 'pendiente', 'Faltan documentos para completar'),
-(2, 11, 'progreso', 'Avanzando en la revisión'),
-(3, 12, 'completada', 'Material recibido exitosamente'),
-(4, 13, 'cancelada', 'Anulado por error en solicitud'),
-(1, 14, 'pendiente', 'Esperando confirmación del departamento'),
-(2, 15, 'progreso', 'Revisión avanzada en curso'),
-(3, 16, 'completada', 'Entrega cerrada con éxito'),
-(4, 17, 'cancelada', 'Cancelado por duplicación de solicitud'),
-(1, 18, 'pendiente', 'Validación de material en espera'),
-(2, 19, 'progreso', 'Actualización pendiente por el usuario'),
-(3, 20, 'completada', 'Finalizado y material recibido'),
-(4, 21, 'cancelada', 'Cancelación aprobada por administración'),
-(1, 1, 'pendiente', 'Revisión inicial retrasada'),
-(2, 3, 'progreso', 'En revisión nuevamente'),
-(3, 6, 'completada', 'Entrega adicional completada'),
-(4, 9, 'cancelada', 'Cancelado debido a inactividad'),
 (1, 12, 'pendiente', 'Pendiente de evaluación'),
-(2, 15, 'progreso', 'Avanzando en el proceso'),
-(3, 20, 'completada', 'Cerrado con éxito'),
 (4, 24, 'cancelada', 'Anulación realizada por error administrativo'),
 (1, 5, 'incompleto', 'Falta documentación del alumno'),
 (2, 4, 'incompleto', 'Error en los datos proporcionados'),
@@ -1176,9 +1156,7 @@ INSERT INTO vale_alumno (fk_pa_vale, fk_alumno_users_vale, status, observaciones
 (4, 2, 'incompleto', 'Material no disponible en el almacén'),
 (1, 1, 'incompleto', 'Pendiente de revisión por el profesor'),
 (2, 9, 'incompleto', 'Datos insuficientes para procesar'),
-(3, 8, 'incompleto', 'Requiere corrección en la solicitud'),
 (4, 7, 'incompleto', 'No cumple con los requisitos necesarios');
-
 
 ALTER TABLE items
 ADD COLUMN cantidad_maxima DECIMAL(8, 2) DEFAULT NULL COMMENT 'Capacidad máxima del item';
@@ -1187,26 +1165,167 @@ UPDATE items
 SET cantidad_maxima = cantidad 
 WHERE cantidad_maxima IS NULL;
 
-DELIMITER //
-
-
+/* 2️⃣  Trigger BEFORE INSERT - inicializa cantidad_maxima */
+DELIMITER $$
 CREATE TRIGGER tr_inicializar_cantidad_maxima
-AFTER INSERT ON items
+BEFORE INSERT ON items
 FOR EACH ROW
 BEGIN
-    IF NEW.cantidad_maxima IS NULL THEN
-        UPDATE items SET cantidad_maxima = NEW.cantidad WHERE id_item = NEW.id_item;
-    END IF;
-END//
+  /*  Si no viene cantidad_maxima, la igualamos a la cantidad ingresada */
+  IF NEW.cantidad_maxima IS NULL THEN
+     SET NEW.cantidad_maxima = NEW.cantidad;
+  END IF;
+END$$
+DELIMITER ;
 
-
+/* 3️⃣  Trigger BEFORE UPDATE - actualiza cuando se reabastece “fuertemente”.*/
+DELIMITER $$
 CREATE TRIGGER tr_actualizar_cantidad_maxima_reabastecimiento
 BEFORE UPDATE ON items
 FOR EACH ROW
 BEGIN
-    IF NEW.cantidad > OLD.cantidad AND (NEW.cantidad - OLD.cantidad) > (OLD.cantidad * 0.5) THEN
+  /*  Solo si la nueva cantidad es > 50 % por encima de la anterior  */
+  IF NEW.cantidad > OLD.cantidad
+     AND NEW.cantidad - OLD.cantidad > OLD.cantidad * 0.5 THEN
         SET NEW.cantidad_maxima = NEW.cantidad;
-    END IF;
-END//
+  END IF;
+END$$
+DELIMITER ;
 
+DELIMITER //
+
+-- Trigger para restar materiales cuando una práctica pasa a "progreso"
+CREATE TRIGGER `actualizar_stock_al_iniciar_practica`
+AFTER UPDATE ON `practicas_asignadas`
+FOR EACH ROW
+BEGIN
+    -- Variables para almacenar datos de la práctica y materiales
+    DECLARE v_id_practica INT;
+    DECLARE v_num_equipos TINYINT;
+    DECLARE v_fk_items_pm INT;
+    DECLARE v_cantidad_pm DECIMAL(8, 2);
+    DECLARE v_contable BOOLEAN;
+    DECLARE v_cantidad_a_restar DECIMAL(8, 2);
+    
+    -- Variable para controlar el final del cursor
+    DECLARE done INT DEFAULT FALSE;
+
+    -- Cursor para iterar sobre los materiales de la práctica
+    DECLARE cur_materiales CURSOR FOR
+        SELECT pm.fk_items_pm, pm.cantidad, pm.contable
+        FROM `practicas_materiales` pm
+        WHERE pm.fk_practicas_pm = v_id_practica;
+
+    -- Handler para el final del cursor
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    -- Solo ejecutar si el status cambia a 'progreso' y no era 'progreso' antes
+    IF NEW.status = 'progreso' AND OLD.status <> 'progreso' THEN
+        SET v_id_practica = NEW.fk_practicas_pa;
+
+        -- Obtener el número de equipos para la práctica
+        SELECT p.num_equipos INTO v_num_equipos
+        FROM `practicas` p
+        WHERE p.id_practica = v_id_practica;
+
+        -- Abrir el cursor
+        OPEN cur_materiales;
+
+        -- Loop para recorrer cada material de la práctica
+        read_loop: LOOP
+            FETCH cur_materiales INTO v_fk_items_pm, v_cantidad_pm, v_contable;
+            IF done THEN
+                LEAVE read_loop;
+            END IF;
+
+            -- Calcular la cantidad a restar
+            IF v_contable = TRUE THEN
+                SET v_cantidad_a_restar = v_cantidad_pm * v_num_equipos;
+            ELSE
+                SET v_cantidad_a_restar = v_cantidad_pm;
+            END IF;
+
+            -- Actualizar la cantidad en la tabla items
+            UPDATE `items`
+            SET `cantidad` = `cantidad` - v_cantidad_a_restar
+            WHERE `id_item` = v_fk_items_pm;
+
+        END LOOP read_loop;
+
+        -- Cerrar el cursor
+        CLOSE cur_materiales;
+    END IF;
+END;
+//
+
+
+-- Trigger para reintegrar materiales (excepto reactivos) cuando una práctica pasa a "completada"
+CREATE TRIGGER `reintegrar_stock_al_completar_practica`
+AFTER UPDATE ON `practicas_asignadas`
+FOR EACH ROW
+BEGIN
+    -- Variables para almacenar datos de la práctica y materiales
+    DECLARE v_id_practica INT;
+    DECLARE v_num_equipos TINYINT;
+    DECLARE v_fk_items_pm INT;
+    DECLARE v_cantidad_pm DECIMAL(8, 2);
+    DECLARE v_contable BOOLEAN;
+    DECLARE v_tipo_item ENUM('kits', 'sensores', 'materiales', 'reactivos-liquidos', 'reactivos-solidos', 'equipos');
+    DECLARE v_cantidad_a_sumar DECIMAL(8, 2);
+
+    -- Variable para controlar el final del cursor
+    DECLARE done INT DEFAULT FALSE;
+
+    -- Cursor para iterar sobre los materiales de la práctica
+    DECLARE cur_materiales_completada CURSOR FOR
+        SELECT pm.fk_items_pm, pm.cantidad, pm.contable, i.tipo
+        FROM `practicas_materiales` pm
+        JOIN `items` i ON pm.fk_items_pm = i.id_item
+        WHERE pm.fk_practicas_pm = v_id_practica;
+    
+    -- Handler para el final del cursor
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    -- Solo ejecutar si el status cambia a 'completada' y no era 'completada' antes
+    IF NEW.status = 'completada' AND OLD.status <> 'completada' THEN
+        SET v_id_practica = NEW.fk_practicas_pa;
+
+        -- Obtener el número de equipos para la práctica
+        SELECT p.num_equipos INTO v_num_equipos
+        FROM `practicas` p
+        WHERE p.id_practica = v_id_practica;
+
+        -- Abrir el cursor
+        OPEN cur_materiales_completada;
+
+        -- Loop para recorrer cada material de la práctica
+        read_loop_completada: LOOP
+            FETCH cur_materiales_completada INTO v_fk_items_pm, v_cantidad_pm, v_contable, v_tipo_item;
+            IF done THEN
+                LEAVE read_loop_completada;
+            END IF;
+
+            -- Solo sumar si el tipo de item NO es reactivo líquido o sólido
+            IF v_tipo_item <> 'reactivos-liquidos' AND v_tipo_item <> 'reactivos-solidos' THEN
+                -- Calcular la cantidad a sumar
+                IF v_contable = TRUE THEN
+                    SET v_cantidad_a_sumar = v_cantidad_pm * v_num_equipos;
+                ELSE
+                    SET v_cantidad_a_sumar = v_cantidad_pm;
+                END IF;
+
+                -- Actualizar la cantidad en la tabla items
+                UPDATE `items`
+                SET `cantidad` = `cantidad` + v_cantidad_a_sumar
+                WHERE `id_item` = v_fk_items_pm;
+            END IF;
+        END LOOP read_loop_completada;
+
+        -- Cerrar el cursor
+        CLOSE cur_materiales_completada;
+    END IF;
+END;
+//
+
+-- Volvemos al delimitador estándar
 DELIMITER ;

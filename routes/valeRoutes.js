@@ -8,6 +8,7 @@ import {
   getValeProfesorStatus,
   getValeProfesorDetails,
   queryGetAllValesAlumno,
+  queryGetAllValesProfesor,
 } from "../querys/valeQuerys.js";
 
 const valeRouter = express.Router();
@@ -130,6 +131,20 @@ valeRouter.get("/getAllValesAlumno", async (req, res) => {
   try {
     const alumnoAllVales = await queryGetAllValesAlumno(fk_alumno_users_vale);
     res.json(alumnoAllVales);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Error al obtener los detalles del vale" });
+  }
+});
+
+valeRouter.get("/getAllValesProfesor", async (req, res) => {
+  const { id_users_vale } = req.query;
+  if (!id_users_vale) {
+    return res.status(400).json({ error: "Falta el id del usuario" });
+  }
+  try {
+    const profesorAllVales = await queryGetAllValesProfesor(id_users_vale);
+    res.json(profesorAllVales);
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Error al obtener los detalles del vale" });

@@ -418,3 +418,98 @@ export async function queryGetAllValesAlumno(fk_alumno_users_vale) {
     throw error;
   }
 }
+function agruparValesConMaterialesProfesor(rows) {
+  if (!rows || rows.length === 0) {
+    return [];
+  }
+  const valesMap = new Map();
+
+  rows.forEach((row) => {
+    const valeId = row.id_vale;
+    let valeEntry = valesMap.get(valeId);
+
+    if (!valeEntry) {
+      valeEntry = {
+        id_practica_asignada: row.id_practica_asignada,
+        status_practica: row.status_practica,
+        fecha_inicio: row.fecha_asignada,
+        fecha_fin: row.fecha_entrega,
+        nombre_grupo: row.nombre_grupo,
+        semestre_grupo: row.semestre_grupo,
+        id_practica: row.id_practica,
+        nombre_practica: row.nombre_practica,
+        materiales: [],
+      };
+      valesMap.set(valeId, valeEntry);
+    }
+
+    // Creamos el objeto material con la información de la fila actual.
+    const material = {
+      nombre_item: row.nombre_item,
+      tipo_item: row.tipo_item,
+      ubicacion: row.ubicacion,
+      cantidad_unitaria: row.cantidad_unitaria,
+      observacion: row.observacion,
+      especial: row.especial,
+      cantidad_total_necesaria: row.cantidad_total_necesaria,
+    };
+
+    // Agregamos el material a la lista de materiales del vale correspondiente.
+    if (row.nombre_item) {
+      valeEntry.materiales.push(material); // CAMBIO AQUÍ: era valeEntry.practica.materiales
+    }
+  });
+
+  return Array.from(valesMap.values());
+}
+
+export async function queryGetAllValesProfesor(id_users_vale) {
+  try {
+    const [rows] = await pool.query(
+      `
+        SELECT
+          pa.id_pa as id_vale,
+          p.id_practica as id_practica,
+          p.nombre AS nombre_practica,
+          pa.id_pa AS id_practica_asignada,
+          pa.status AS status_practica,
+          DATE_FORMAT(pa.fecha_inicio, '%d/%m/%Y %H:%i') AS fecha_asignada,
+          DATE_FORMAT(pa.fecha_fin, '%d/%m/%Y %H:%i') AS fecha_entrega,
+          g.nombre AS nombre_grupo,
+          g.semestre AS semestre_grupo,
+          i.nombre AS nombre_item,
+          i.tipo AS tipo_item,
+          i.ubicacion,
+          i.observacion,
+          i.especial,
+          pm.cantidad AS cantidad_unitaria,
+          pm.contable,
+          CASE
+              WHEN pm.contable = TRUE THEN pm.cantidad * p.num_equipos
+              ELSE pm.cantidad
+          END AS cantidad_total_necesaria
+        FROM
+          practicas_asignadas pa
+        JOIN
+          practicas p ON pa.fk_practicas_pa = p.id_practica
+        JOIN
+          practicas_materiales pm ON p.id_practica = pm.fk_practicas_pm
+        JOIN
+          items i ON pm.fk_items_pm = i.id_item
+        JOIN
+          grupo g ON pa.fk_grupo_pa = g.id_grupo
+        JOIN
+          users u ON p.fk_profesor_users_practica = u.id_user
+        WHERE
+              p.fk_profesor_users_practica = ? AND pa.status IN ('pendiente', 'progreso')
+        ORDER BY
+            pa.fecha_asignada DESC, p.id_practica DESC;
+          `,
+      [id_users_vale]
+    );
+    return agruparValesConMaterialesProfesor(rows);
+  } catch (error) {
+    console.error("Error al ejecutar la consulta:", error);
+    throw error;
+  }
+}
