@@ -1,5 +1,5 @@
 import express from 'express';
-import { addGrupoCode, getGrupoCode, getGrupos, getGruposByAlumno, getGruposPractica } from '../querys/gruposQuerys.js';
+import { addGrupoCode, getGrupoCode, getGrupos, getGruposByUsuario, getGruposPractica } from '../querys/gruposQuerys.js';
 
 const gruposRouter = express.Router();
 
@@ -52,11 +52,11 @@ gruposRouter.post('/addGrupoCode', async (req, res) => {
     }
 });  
 
-gruposRouter.get('/getGruposByAlumno/:alumnoId', async (req, res) => {
-    const { alumnoId } = req.params;
+gruposRouter.get('/getGruposByUsuario/:usuarioId', async (req, res) => {
+    const { usuarioId } = req.params;
 
     try {
-        const grupos = await getGruposByAlumno(alumnoId);
+        const grupos = await getGruposByUsuario(usuarioId);
         res.json(grupos);
     } catch (error) {
         console.log(error);

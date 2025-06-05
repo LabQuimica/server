@@ -16,6 +16,8 @@ import {
   updateStatusPractica,
   inscribemePracticaQuery,
   updateFechasPracticaAsignadaQuery,
+  getPracticasByGroup,
+  getNewPracticasAsignadas,
 } from "../querys/practicaQuerys.js";
 
 const practicaRouter = express.Router();
