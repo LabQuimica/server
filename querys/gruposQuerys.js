@@ -66,24 +66,51 @@ export async function addGrupoCode(id_grupo, codigo) {
     }
 }  
 
-export async function getGruposByAlumno(id_alumno){
+export async function getGruposByUsuario(id_usuario) {
     try {
-        const [results] = await pool.query(`
-            SELECT 
-                g.id_grupo,
-                g.nombre,
-                g.semestre,
-                g.codigo
-            FROM 
-                grupo g
-            JOIN 
-                grupo_alumnos ga ON g.id_grupo = ga.fk_grupo_ga
-            WHERE 
-                ga.fk_alumno_users_ga = ?;
-        `,[id_alumno]
-        );
+        const [rolResult] = await pool.query(`
+            SELECT rol 
+            FROM users 
+            WHERE id_user = ?;
+        `, [id_usuario]);
 
-        return results;
+        if (rolResult.length === 0) {
+            throw new Error('Usuario no encontrado');
+        }
+
+        const rol = rolResult[0].rol;
+
+        if (rol === "alumno") {
+            const [results] = await pool.query(`
+                SELECT 
+                    g.id_grupo,
+                    g.nombre,
+                    g.semestre,
+                    g.codigo
+                FROM 
+                    grupo g
+                JOIN 
+                    grupo_alumnos ga ON g.id_grupo = ga.fk_grupo_ga
+                WHERE 
+                    ga.fk_alumno_users_ga = ?;
+            `, [id_usuario]);
+
+            return results;
+        } else if (rol === "profesor") {
+            const [results] = await pool.query(`
+                SELECT 
+                    g.id_grupo,
+                    g.nombre,
+                    g.semestre,
+                    g.codigo
+                FROM 
+                    grupo g;
+            `);
+
+            return results;
+        } else {
+            throw new Error('Rol no reconocido');
+        }
     } catch (error) {
         console.error('Error al ejecutar la consulta:', error);
         throw error;
